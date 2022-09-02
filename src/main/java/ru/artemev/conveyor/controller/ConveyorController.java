@@ -1,5 +1,7 @@
 package ru.artemev.conveyor.controller;
 
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,11 +24,13 @@ public class ConveyorController {
     private IConveyorService conveyorService;
 
     @PostMapping("/conveyor/offers")
+    @ApiOperation(value = "Получение списка LoanOfferDTO")
     public ResponseEntity<List<LoanOfferDTO>> getOffers(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
         return ResponseEntity.ok(conveyorService.getOffers(loanApplicationRequestDTO));
     }
 
     @PostMapping("/conveyor/calculation")
+    @ApiOperation(value = "Валидация присланных данных + скоринг данных + полный расчет параметров кредита")
     public ResponseEntity<CreditDTO> getCreditDto(@RequestBody ScoringDataDTO scoringDataDTO) {
         return ResponseEntity.ok(conveyorService.getCreditDto(scoringDataDTO));
     }
