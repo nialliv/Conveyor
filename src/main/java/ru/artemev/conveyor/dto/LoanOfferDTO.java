@@ -1,18 +1,34 @@
 package ru.artemev.conveyor.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@Schema(description = "Предложение по кредиту")
 public class LoanOfferDTO {
-    private Long applicationId;
-    private BigDecimal requestedAmount;
-    private BigDecimal totalAmount;
-    private Integer term;
-    private BigDecimal monthlyPayment;
-    private BigDecimal rate;
-    private Boolean isInsuranceEnable;
-    private Boolean isSalaryClient;
+  @Schema(description = "Номер предложения", example = "4")
+  private Long applicationId;
 
+  @Schema(description = "Запрашиваемая сумма", example = "100000")
+  private BigDecimal requestedAmount;
+
+  @Schema(description = "Итоговая сумма", example = "15000")
+  private final BigDecimal totalAmount;
+
+  @Schema(description = "Срок займа", example = "10")
+  private final Integer term;
+
+  @Schema(description = "Ежемесячный платеж", example = "1500")
+  private final BigDecimal monthlyPayment;
+
+  @Schema(description = "Процентная ставка", example = "10")
+  private final BigDecimal rate;
+
+  @Schema(description = "Страховка", example = "true")
+  private final boolean isInsuranceEnabled;
+
+  @Schema(description = "Зарплатный клиент", example = "true")
+  private final boolean isSalaryClient;
 }
