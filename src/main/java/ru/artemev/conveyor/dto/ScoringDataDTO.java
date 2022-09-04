@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
+@Schema(description = "Данные для оценки")
 public class ScoringDataDTO {
   @NotNull
   @DecimalMin(value = "100000", message = "Сумма не может быть меньше 100 000р")
