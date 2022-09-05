@@ -20,19 +20,19 @@ import java.util.List;
 @RequestMapping("/api")
 public class ConveyorController {
 
-    @Autowired
-    private IConveyorService conveyorService;
+  @Autowired private IConveyorService conveyorService;
 
-    @PostMapping("/conveyor/offers")
-    @ApiOperation(value = "Получение списка LoanOfferDTO")
-    public ResponseEntity<List<LoanOfferDTO>> getOffers(@RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
-        return ResponseEntity.ok(conveyorService.getOffers(loanApplicationRequestDTO));
-    }
+  @PostMapping("/conveyor/offers")
+  @ApiOperation(value = "Получение списка LoanOfferDTO")
+  public ResponseEntity<List<LoanOfferDTO>> getOffers(
+      @RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
+    return ResponseEntity.ok(conveyorService.getOffers(loanApplicationRequestDTO));
+  }
 
-    @PostMapping("/conveyor/calculation")
-    @ApiOperation(value = "Валидация присланных данных + скоринг данных + полный расчет параметров кредита")
-    public ResponseEntity<CreditDTO> getCreditDto(@RequestBody ScoringDataDTO scoringDataDTO) {
-        return ResponseEntity.ok(conveyorService.getCreditDto(scoringDataDTO));
-    }
-
+  @PostMapping("/conveyor/calculation")
+  @ApiOperation(
+      value = "Валидация присланных данных + скоринг данных + полный расчет параметров кредита")
+  public ResponseEntity<CreditDTO> getCreditDto(@RequestBody ScoringDataDTO scoringDataDTO) {
+    return ResponseEntity.ok(conveyorService.getCreditDto(scoringDataDTO));
+  }
 }
