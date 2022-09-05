@@ -38,6 +38,7 @@ public class ScoringDataDTO {
   @NotBlank
   @Schema(description = "Пол", example = "MALE")
   private Gender gender;
+
   @NotNull
   @Past(message = "Дата может быть только прошлым")
   private LocalDate birthday;
@@ -65,9 +66,23 @@ public class ScoringDataDTO {
   @Schema(description = "Семейное положение", example = "SINGLE")
   private MaritalStatus maritalStatus;
 
+  @NotNull
+  @Schema(description = "Количество иждивенцев", example = "1")
   private Integer dependentAmount;
+
+  @NotNull
+  @Schema(description = "Трудоустройство")
   private EmploymentDTO employment;
+
+  @NotNull
+  @Schema(description = "Учетная запись")
   private String account;
+
+  @NotNull
+  @Schema(description = "Страховка", example = "true")
   private Boolean isInsuranceEnabled;
+
+  @NotNull
+  @Schema(description = "Зарплатный клиент", example = "true")
   private Boolean isSalaryClient;
 }
