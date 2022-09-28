@@ -20,45 +20,45 @@ import javax.persistence.*
 class Client(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long? = null,
+    val id: Long? = null,
 
     @Column(name = "first_name", nullable = false)
-    private val firstName: String? = null,
+    val firstName: String? = null,
 
     @Column(name = "last_name", nullable = false)
-    private val lastName: String? = null,
+    val lastName: String? = null,
 
     @Column(name = "middle_name", nullable = false)
-    private val middleName: String? = null,
+    val middleName: String? = null,
 
     @Column(name = "birthday", nullable = false)
-    private val birthday: LocalDate? = null,
+    val birthday: LocalDate? = null,
 
     @Column(name = "email", nullable = false)
-    private val email: String? = null,
+    val email: String? = null,
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     @Enumerated(EnumType.STRING)
-    private val gender: Gender? = null,
+    val gender: Gender? = null,
 
-    @Column(name = "marital_status", nullable = false)
+    @Column(name = "marital_status")
     @Enumerated(EnumType.STRING)
-    private val maritalStatus: MaritalStatus? = null,
+    val maritalStatus: MaritalStatus? = null,
 
-    @Column(name = "dependent_amount", nullable = false)
-    private val dependentAmount: Int? = null,
+    @Column(name = "dependent_amount")
+    val dependentAmount: Int? = null,
 
     @Type(type = "jsonb")
     @Column(name = "passport", columnDefinition = "jsonb")
-    private val passport: Passport? = null,
+    val passport: Passport? = null,
 
     @Type(type = "jsonb")
     @Column(name = "employment", columnDefinition = "jsonb")
-    private val employment: EmploymentDTO? = null,
+    val employment: EmploymentDTO? = null,
 
     @Column(name = "account")
-    private val account: String? = null,
+    val account: String? = null,
 
     @OneToMany(mappedBy = "client")
-    private val applications: List<Application>? = null,
+    val applications: List<Application>? = null,
 )
