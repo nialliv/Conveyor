@@ -42,10 +42,11 @@ public class ConveyorServiceImp implements IConveyorService {
   @Override
   public CreditDTO getCreditDto(ScoringDataDTO scoringDataDTO) {
     log.info("Started generating CreditDTO");
+    log.info("Received scoringDataDTO" + scoringDataDTO);
     if (!validateData(scoringDataDTO)) throw new ScoringDataException("Ошибка валидации");
     BigDecimal rate = BigDecimal.valueOf(baseRate);
-    rate = getRateByInsurance(scoringDataDTO.getIsInsuranceEnabled(), rate);
-    rate = getRateBySalary(scoringDataDTO.getIsSalaryClient(), rate);
+    rate = getRateByInsurance(scoringDataDTO.getInsuranceEnabled(), rate);
+    rate = getRateBySalary(scoringDataDTO.getSalaryClient(), rate);
     rate = getRateByEmployment(scoringDataDTO.getEmployment(), rate);
     rate = getRateByMaritalStatus(scoringDataDTO.getMaritalStatus(), rate);
     rate = getRateByDependentAmount(scoringDataDTO.getDependentAmount(), rate);
@@ -55,15 +56,17 @@ public class ConveyorServiceImp implements IConveyorService {
     BigDecimal monthlyPayment = psk.divide(BigDecimal.valueOf(term), 2, RoundingMode.HALF_EVEN);
     List<PaymentScheduleElement> paymentScheduleElements =
         getPaymentSchedule(scoringDataDTO.getAmount(), term, psk, monthlyPayment, rate);
+
     CreditDTO creditDTO =
         CreditDTO.builder()
             .amount(scoringDataDTO.getAmount())
             .term(term)
             .rate(rate)
             .psk(psk)
-            .isInsuranceEnabled(scoringDataDTO.getIsInsuranceEnabled())
-            .isSalaryClient(scoringDataDTO.getIsSalaryClient())
+            .insuranceEnabled(scoringDataDTO.getInsuranceEnabled())
+            .salaryClient(scoringDataDTO.getSalaryClient())
             .paymentSchedule(paymentScheduleElements)
+            .monthlyPayment(monthlyPayment)
             .build();
     log.info("Finished generate CreditDTO");
     return creditDTO;
@@ -124,8 +127,8 @@ public class ConveyorServiceImp implements IConveyorService {
             .term(term)
             .monthlyPayment(monthlyPayment)
             .rate(rate)
-            .isInsuranceEnabled(isInsuranceEnabled)
-            .isSalaryClient(isSalaryClient)
+            .insuranceEnabled(isInsuranceEnabled)
+            .salaryClient(isSalaryClient)
             .build();
     log.info("Offer calculation completed");
     return loanOfferDTO;
