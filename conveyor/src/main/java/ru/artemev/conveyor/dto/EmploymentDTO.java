@@ -17,7 +17,7 @@ public class EmploymentDTO {
   @Schema(description = "Оклад", example = "15000")
   private final BigDecimal salary;
 
-  @Schema(description = "Должность", example = "MANAGER")
+  @Schema(description = "Должность", example = "MID_MANAGER")
   private final Position position;
 
   @Schema(description = "Общий трудовой стаж", example = "12")
