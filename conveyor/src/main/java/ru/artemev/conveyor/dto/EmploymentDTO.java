@@ -1,11 +1,13 @@
 package ru.artemev.conveyor.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
+@Builder
 @Schema(description = "Трудоустройство")
 public class EmploymentDTO {
   @Schema(description = "Рабочий статус", example = "SELF_EMPLOYED")

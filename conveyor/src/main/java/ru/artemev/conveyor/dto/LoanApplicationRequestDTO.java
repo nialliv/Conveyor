@@ -1,6 +1,7 @@
 package ru.artemev.conveyor.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.*;
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
+@Builder
 @Schema(description = "Заявка на кредит")
 public class LoanApplicationRequestDTO {
   @NotNull
