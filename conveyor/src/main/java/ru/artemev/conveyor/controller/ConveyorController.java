@@ -1,6 +1,7 @@
 package ru.artemev.conveyor.controller;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,20 +18,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "кредитный конвейер")
 public class ConveyorController {
 
   @Autowired private IConveyorService conveyorService;
 
   @PostMapping("/conveyor/offers")
-  @ApiOperation(value = "Получение списка LoanOfferDTO")
+  @Operation(summary = "Получение списка LoanOfferDTO")
   public ResponseEntity<List<LoanOfferDTO>> getOffers(
       @RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO) {
     return ResponseEntity.ok(conveyorService.getOffers(loanApplicationRequestDTO));
   }
 
   @PostMapping("/conveyor/calculation")
-  @ApiOperation(
-      value = "Валидация присланных данных + скоринг данных + полный расчет параметров кредита")
+  @Operation(
+      summary = "Валидация присланных данных + скоринг данных + полный расчет параметров кредита")
   public ResponseEntity<CreditDTO> getCreditDto(@RequestBody ScoringDataDTO scoringDataDTO) {
     return ResponseEntity.ok(conveyorService.getCreditDto(scoringDataDTO));
   }
