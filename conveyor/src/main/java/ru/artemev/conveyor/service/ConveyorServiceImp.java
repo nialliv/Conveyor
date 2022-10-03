@@ -60,7 +60,8 @@ public class ConveyorServiceImp implements IConveyorService {
             .amount(scoringDataDTO.getAmount())
             .term(term)
             .rate(rate)
-            .psk(psk)
+            .psk(psk.setScale(0))
+            .monthlyPayment(monthlyPayment)
             .isInsuranceEnabled(scoringDataDTO.getIsInsuranceEnabled())
             .isSalaryClient(scoringDataDTO.getIsSalaryClient())
             .paymentSchedule(paymentScheduleElements)
@@ -87,7 +88,7 @@ public class ConveyorServiceImp implements IConveyorService {
               .totalPayment(totalPayment)
               .interestPayment(interestPayment)
               .debtPayment(debtPayment)
-              .remainingDebt(remainingDebt)
+              .remainingDebt(remainingDebt.setScale(2))
               .build());
     }
     return paymentScheduleElements;
@@ -99,7 +100,7 @@ public class ConveyorServiceImp implements IConveyorService {
       boolean isSalaryClient,
       LoanApplicationRequestDTO loanApplicationRequestDTO) {
     log.info("Complete offer calculation started");
-    if (Period.between(loanApplicationRequestDTO.getBirthday(), LocalDate.now()).getYears() < 18)
+    if (Period.between(loanApplicationRequestDTO.getBirthday(), LocalDate.now()).getYears() <= 18)
       throw new ValidationException("Человеку меньше 18 лет");
     BigDecimal rate = BigDecimal.valueOf(baseRate);
     rate = getRateByInsurance(isInsuranceEnabled, rate);
@@ -112,7 +113,7 @@ public class ConveyorServiceImp implements IConveyorService {
         (requestedAmount.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN))
             .multiply(monthlyPercent)
             .multiply(BigDecimal.valueOf(term));
-    BigDecimal totalAmount = requestedAmount.add(creditCoast);
+    BigDecimal totalAmount = requestedAmount.add(creditCoast).setScale(0);
     BigDecimal monthlyPayment =
         totalAmount.divide(BigDecimal.valueOf(term), 2, RoundingMode.HALF_EVEN);
 
