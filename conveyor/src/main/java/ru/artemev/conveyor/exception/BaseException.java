@@ -9,6 +9,6 @@ import org.springframework.http.HttpStatus;
 @Data
 @AllArgsConstructor
 public class BaseException extends RuntimeException {
-    private HttpStatus httpStatus;
-    private ApiError apiError;
+  private HttpStatus httpStatus;
+  private ApiError apiError;
 }

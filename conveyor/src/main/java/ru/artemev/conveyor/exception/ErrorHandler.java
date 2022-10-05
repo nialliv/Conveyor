@@ -1,14 +1,22 @@
 package ru.artemev.conveyor.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class ErrorHandler extends ResponseEntityExceptionHandler {
-  @ExceptionHandler(BaseException.class)
+public class ErrorHandler {
+  @ExceptionHandler(value = {BaseException.class})
   public ResponseEntity<ApiError> handlerHandlerException(BaseException ex) {
-    return ResponseEntity.status(ex.getHttpStatus()).body(ex.getApiError());
+    ApiError apiError = ex.getApiError();
+    HttpStatus httpStatus = ex.getHttpStatus();
+    return new ResponseEntity<>(apiError, httpStatus);
+  }
+
+  @ExceptionHandler(value = {Exception.class})
+  public ResponseEntity<ApiError> defaultHandlerException(Exception e) {
+    ApiError apiError = new ApiError(e.getClass().getName(), e.getMessage());
+    return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }
 }
