@@ -3,6 +3,7 @@ package ru.artemev.deal.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.artemev.deal.client.ConveyorClient;
 import ru.artemev.deal.dto.CreditDTO;
 import ru.artemev.deal.dto.FinishRegistrationRequestDTO;
@@ -37,6 +38,7 @@ public class DealServiceImpl implements DealService {
   @Autowired private ConveyorClient conveyorClient;
 
   @Override
+  @Transactional
   public List<LoanOfferDTO> calculationPossibleLoans(
       LoanApplicationRequestDTO loanApplicationRequestDTO) {
     /*
@@ -64,6 +66,7 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
+  @Transactional
   public void selectOneOfOffers(LoanOfferDTO loanOfferDTO) {
     /*
     По API приходит LoanOfferDTO
@@ -105,6 +108,7 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
+  @Transactional
   public void completionOfRegistration(
       Long id, FinishRegistrationRequestDTO finishRegistrationRequestDTO) {
     /*
@@ -176,7 +180,7 @@ public class DealServiceImpl implements DealService {
     log.info("Updated applicationStatus = " + applicationEntity.getApplicationStatus());
     log.info("Updated applicationHistoryList = " + applicationHistoryList);
 
-    CreditDTO creditDTO = conveyorClient.getCreditDto(scoringDataDTO).getBody();
+    CreditDTO creditDTO = conveyorClient.getCreditDto(scoringDataDTO);
 
     log.info("Received creditDTO from conveyor-client");
     log.info("creditDTO = " + creditDTO);
