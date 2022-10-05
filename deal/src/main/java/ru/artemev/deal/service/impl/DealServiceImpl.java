@@ -4,10 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artemev.deal.client.ConveyorClient;
-import ru.artemev.deal.dto.*;
+import ru.artemev.deal.dto.CreditDTO;
+import ru.artemev.deal.dto.FinishRegistrationRequestDTO;
+import ru.artemev.deal.dto.LoanApplicationRequestDTO;
+import ru.artemev.deal.dto.LoanOfferDTO;
+import ru.artemev.deal.dto.ScoringDataDTO;
 import ru.artemev.deal.entity.ApplicationEntity;
 import ru.artemev.deal.entity.ClientEntity;
 import ru.artemev.deal.entity.CreditEntity;
+import ru.artemev.deal.model.ApplicationHistory;
+import ru.artemev.deal.model.Passport;
+import ru.artemev.deal.model.enums.ApplicationStatus;
+import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
@@ -177,8 +185,6 @@ public class DealServiceImpl implements DealService {
       throw new RuntimeException("CreditDTO received as null");
     }
 
-
-
     CreditEntity creditEntity =
         creditRepository.save(
             CreditEntity.builder()
@@ -192,7 +198,6 @@ public class DealServiceImpl implements DealService {
                 .salaryClient(creditDTO.getSalaryClient())
                 .creditStatus(CreditStatus.CALCULATED)
                 .build());
-
 
     log.info("Saved creditEntity");
 
