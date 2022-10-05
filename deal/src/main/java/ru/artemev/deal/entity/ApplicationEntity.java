@@ -7,11 +7,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import ru.artemev.deal.dto.ApplicationHistory;
-import ru.artemev.deal.dto.ApplicationStatus;
+import ru.artemev.deal.model.ApplicationHistory;
+import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.dto.LoanOfferDTO;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.List;
 

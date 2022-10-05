@@ -8,11 +8,19 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import ru.artemev.deal.dto.EmploymentDTO;
-import ru.artemev.deal.dto.Gender;
-import ru.artemev.deal.dto.MaritalStatus;
-import ru.artemev.deal.dto.Passport;
+import ru.artemev.deal.model.enums.Gender;
+import ru.artemev.deal.model.enums.MaritalStatus;
+import ru.artemev.deal.model.Passport;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.List;
 
