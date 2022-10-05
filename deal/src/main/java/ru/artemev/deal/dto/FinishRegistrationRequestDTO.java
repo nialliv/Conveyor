@@ -2,6 +2,8 @@ package ru.artemev.deal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import ru.artemev.deal.model.enums.Gender;
+import ru.artemev.deal.model.enums.MaritalStatus;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
