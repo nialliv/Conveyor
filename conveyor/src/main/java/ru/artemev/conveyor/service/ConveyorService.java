@@ -7,7 +7,7 @@ import ru.artemev.conveyor.dto.ScoringDataDTO;
 
 import java.util.List;
 
-public interface IConveyorService {
+public interface ConveyorService {
     List<LoanOfferDTO> getOffers(LoanApplicationRequestDTO loanApplicationRequestDTO);
 
     CreditDTO getCreditDto(ScoringDataDTO scoringDataDTO);
