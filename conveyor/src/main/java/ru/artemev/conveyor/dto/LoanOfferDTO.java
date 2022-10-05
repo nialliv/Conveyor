@@ -20,8 +20,12 @@ public class LoanOfferDTO {
   private final BigDecimal rate;
   @Schema(description = "Страховка", example = "true")
 <<<<<<< HEAD
+<<<<<<< HEAD
   private final boolean insuranceEnabled;
 
+=======
+  private final boolean isInsuranceEnabled;
+>>>>>>> f5a3fee (reformatted code)
   @Schema(description = "Зарплатный клиент", example = "true")
   private final boolean salaryClient;
 =======
@@ -32,5 +36,8 @@ public class LoanOfferDTO {
   private Long applicationId;
   @Schema(description = "Запрашиваемая сумма", example = "100000")
   private BigDecimal requestedAmount;
+<<<<<<< HEAD
+>>>>>>> f5a3fee (reformatted code)
+=======
 >>>>>>> f5a3fee (reformatted code)
 }
