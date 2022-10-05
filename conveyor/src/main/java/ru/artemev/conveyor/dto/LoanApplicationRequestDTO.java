@@ -1,11 +1,6 @@
 package ru.artemev.conveyor.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-<<<<<<< HEAD
-import jakarta.validation.constraints.*;
-import lombok.Data;
-
-=======
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,15 +11,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
->>>>>>> feature/MS-conveyor/mvp1
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-<<<<<<< HEAD
-=======
 @Builder
->>>>>>> feature/MS-conveyor/mvp1
 @Schema(description = "Заявка на кредит")
 public class LoanApplicationRequestDTO {
   @NotNull
@@ -37,29 +28,17 @@ public class LoanApplicationRequestDTO {
   @Schema(description = "Срок займа", example = "12")
   private Integer term;
 
-<<<<<<< HEAD
-  @NotBlank
-=======
   @NotNull
->>>>>>> feature/MS-conveyor/mvp1
   @Size(min = 2, max = 100)
   @Schema(description = "Имя", example = "Петя")
   private String firstName;
 
-<<<<<<< HEAD
-  @NotBlank
-=======
   @NotNull
->>>>>>> feature/MS-conveyor/mvp1
   @Size(min = 2, max = 100)
   @Schema(description = "Фамилия", example = "Петров")
   private String lastName;
 
-<<<<<<< HEAD
-  @NotBlank
-=======
   @NotNull
->>>>>>> feature/MS-conveyor/mvp1
   @Size(min = 2, max = 100)
   @Schema(description = "Отчество", example = "Петрович")
   private String middleName;

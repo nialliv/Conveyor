@@ -1,12 +1,6 @@
 package ru.artemev.conveyor.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-<<<<<<< HEAD
-import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
-
-=======
 import lombok.Data;
 import ru.artemev.conveyor.model.enums.Gender;
 import ru.artemev.conveyor.model.enums.MaritalStatus;
@@ -18,15 +12,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
->>>>>>> feature/MS-conveyor/mvp1
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-<<<<<<< HEAD
-@Builder
-=======
->>>>>>> feature/MS-conveyor/mvp1
 @Schema(description = "Данные для оценки")
 public class ScoringDataDTO {
   @NotNull
@@ -99,17 +88,9 @@ public class ScoringDataDTO {
 
   @NotNull
   @Schema(description = "Страховка", example = "true")
-<<<<<<< HEAD
-  private Boolean insuranceEnabled;
-
-  @NotNull
-  @Schema(description = "Зарплатный клиент", example = "true")
-  private Boolean salaryClient;
-=======
   private Boolean isInsuranceEnabled;
 
   @NotNull
   @Schema(description = "Зарплатный клиент", example = "true")
   private Boolean isSalaryClient;
->>>>>>> feature/MS-conveyor/mvp1
 }
