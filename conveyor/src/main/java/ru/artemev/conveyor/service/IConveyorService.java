@@ -7,8 +7,13 @@ import ru.artemev.conveyor.dto.ScoringDataDTO;
 
 import java.util.List;
 
+<<<<<<< HEAD:conveyor/src/main/java/ru/artemev/conveyor/service/IConveyorService.java
 public interface IConveyorService {
     List<LoanOfferDTO> getOffers(LoanApplicationRequestDTO loanApplicationRequestDTO);
+=======
+public interface ConveyorService {
+  List<LoanOfferDTO> getOffers(LoanApplicationRequestDTO loanApplicationRequestDTO);
+>>>>>>> f5a3fee (reformatted code):conveyor/src/main/java/ru/artemev/conveyor/service/ConveyorService.java
 
-    CreditDTO getCreditDto(ScoringDataDTO scoringDataDTO);
+  CreditDTO getCreditDto(ScoringDataDTO scoringDataDTO);
 }
