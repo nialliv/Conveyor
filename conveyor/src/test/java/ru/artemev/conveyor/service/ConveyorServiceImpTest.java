@@ -5,7 +5,17 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.artemev.conveyor.dto.*;
+import ru.artemev.conveyor.dto.CreditDTO;
+import ru.artemev.conveyor.dto.EmploymentDTO;
+import ru.artemev.conveyor.dto.LoanApplicationRequestDTO;
+import ru.artemev.conveyor.dto.LoanOfferDTO;
+import ru.artemev.conveyor.dto.ScoringDataDTO;
+import ru.artemev.conveyor.model.PaymentScheduleElement;
+import ru.artemev.conveyor.model.enums.EmploymentStatus;
+import ru.artemev.conveyor.model.enums.Gender;
+import ru.artemev.conveyor.model.enums.MaritalStatus;
+import ru.artemev.conveyor.model.enums.Position;
+import ru.artemev.conveyor.service.impl.ConveyorServiceImp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,7 +29,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 class ConveyorServiceImpTest {
 
-  @Autowired IConveyorService conveyorService = new ConveyorServiceImp();
+  @Autowired ConveyorService conveyorService = new ConveyorServiceImp();
 
   @Test
   void getOffers() {
