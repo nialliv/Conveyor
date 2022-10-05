@@ -1,11 +1,20 @@
-package ru.artemev.conveyor.service;
+package ru.artemev.conveyor.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.artemev.conveyor.dto.*;
-import ru.artemev.conveyor.exception.ScoringDataException;
+import ru.artemev.conveyor.dto.CreditDTO;
+import ru.artemev.conveyor.dto.EmploymentDTO;
+import ru.artemev.conveyor.dto.LoanApplicationRequestDTO;
+import ru.artemev.conveyor.dto.LoanOfferDTO;
+import ru.artemev.conveyor.dto.ScoringDataDTO;
 import ru.artemev.conveyor.exception.ValidationException;
+import ru.artemev.conveyor.model.PaymentScheduleElement;
+import ru.artemev.conveyor.model.enums.EmploymentStatus;
+import ru.artemev.conveyor.model.enums.Gender;
+import ru.artemev.conveyor.model.enums.MaritalStatus;
+import ru.artemev.conveyor.model.enums.Position;
+import ru.artemev.conveyor.service.ConveyorService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,7 +28,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-public class ConveyorServiceImp implements IConveyorService {
+public class ConveyorServiceImp implements ConveyorService {
 
   @Value("${rate.base}")
   private int baseRate;
@@ -42,7 +51,7 @@ public class ConveyorServiceImp implements IConveyorService {
   @Override
   public CreditDTO getCreditDto(ScoringDataDTO scoringDataDTO) {
     log.info("Started generating CreditDTO");
-    if (!validateData(scoringDataDTO)) throw new ScoringDataException("Ошибка валидации");
+    if (!validateData(scoringDataDTO)) throw new ValidationException("Ошибка валидации");
     BigDecimal rate = BigDecimal.valueOf(baseRate);
     rate = getRateByInsurance(scoringDataDTO.getIsInsuranceEnabled(), rate);
     rate = getRateBySalary(scoringDataDTO.getIsSalaryClient(), rate);
@@ -101,7 +110,7 @@ public class ConveyorServiceImp implements IConveyorService {
       LoanApplicationRequestDTO loanApplicationRequestDTO) {
     log.info("Complete offer calculation started");
     if (Period.between(loanApplicationRequestDTO.getBirthday(), LocalDate.now()).getYears() <= 18)
-      throw new ValidationException("Человеку меньше 18 лет");
+      throw new ValidationException("Клиенту нет 18 лет");
     BigDecimal rate = BigDecimal.valueOf(baseRate);
     rate = getRateByInsurance(isInsuranceEnabled, rate);
     rate = getRateBySalary(isSalaryClient, rate);
@@ -143,7 +152,7 @@ public class ConveyorServiceImp implements IConveyorService {
     int age = Period.between(scoringDataDTO.getBirthday(), LocalDate.now()).getYears();
     if (20 > age || age > 60) throw new ValidationException("Возраст менее 20 или более 60 лет");
     if (scoringDataDTO.getEmployment().getEmploymentStatus() == EmploymentStatus.UNEMPLOYED)
-      throw new ValidationException("Человек безработный");
+      throw new ValidationException("Клиент безработный");
     if (scoringDataDTO.getEmployment().getSalary().multiply(BigDecimal.valueOf(20)).intValue()
         < scoringDataDTO.getAmount().intValue())
       throw new ValidationException("Сумма займа больше, чем 20 зарплат");
