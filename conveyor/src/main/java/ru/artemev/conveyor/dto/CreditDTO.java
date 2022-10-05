@@ -3,6 +3,10 @@ package ru.artemev.conveyor.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
+<<<<<<< HEAD
+=======
+import ru.artemev.conveyor.model.PaymentScheduleElement;
+>>>>>>> feature/MS-conveyor/mvp1
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,10 +32,17 @@ public class CreditDTO {
   private final BigDecimal psk;
 
   @Schema(description = "Страховка", example = "true")
+<<<<<<< HEAD
   private final Boolean insuranceEnabled;
 
   @Schema(description = "Зарплатный клиент", example = "true")
   private final Boolean salaryClient;
+=======
+  private final Boolean isInsuranceEnabled;
+
+  @Schema(description = "Зарплатный клиент", example = "true")
+  private final Boolean isSalaryClient;
+>>>>>>> feature/MS-conveyor/mvp1
 
   @Schema(description = "График платежей")
   private final List<PaymentScheduleElement> paymentSchedule;

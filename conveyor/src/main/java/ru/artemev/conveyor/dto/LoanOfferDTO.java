@@ -21,6 +21,7 @@ public class LoanOfferDTO {
   @Schema(description = "Страховка", example = "true")
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   private final boolean insuranceEnabled;
 
 =======
@@ -29,6 +30,8 @@ public class LoanOfferDTO {
   @Schema(description = "Зарплатный клиент", example = "true")
   private final boolean salaryClient;
 =======
+=======
+>>>>>>> feature/MS-conveyor/mvp1
   private final boolean isInsuranceEnabled;
   @Schema(description = "Зарплатный клиент", example = "true")
   private final boolean isSalaryClient;
@@ -37,7 +40,10 @@ public class LoanOfferDTO {
   @Schema(description = "Запрашиваемая сумма", example = "100000")
   private BigDecimal requestedAmount;
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> f5a3fee (reformatted code)
 =======
 >>>>>>> f5a3fee (reformatted code)
+=======
+>>>>>>> feature/MS-conveyor/mvp1
 }
