@@ -1,4 +1,4 @@
-package ru.artemev.application.dto;
+package ru.artemev.application.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
