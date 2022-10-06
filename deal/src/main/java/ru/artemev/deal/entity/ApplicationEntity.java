@@ -7,9 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import ru.artemev.deal.dto.LoanOfferDTO;
 import ru.artemev.deal.model.ApplicationHistory;
 import ru.artemev.deal.model.enums.ApplicationStatus;
-import ru.artemev.deal.dto.LoanOfferDTO;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import ru.artemev.deal.dto.EmploymentDTO;
+import ru.artemev.deal.model.Passport;
 import ru.artemev.deal.model.enums.Gender;
 import ru.artemev.deal.model.enums.MaritalStatus;
-import ru.artemev.deal.model.Passport;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
