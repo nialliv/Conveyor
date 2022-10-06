@@ -2,6 +2,7 @@ package ru.artemev.deal.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.artemev.deal.client.ConveyorClient;
@@ -13,6 +14,9 @@ import ru.artemev.deal.dto.ScoringDataDTO;
 import ru.artemev.deal.entity.ApplicationEntity;
 import ru.artemev.deal.entity.ClientEntity;
 import ru.artemev.deal.entity.CreditEntity;
+import ru.artemev.deal.exception.ApiError;
+import ru.artemev.deal.exception.BaseException;
+import ru.artemev.deal.exception.NotFoundException;
 import ru.artemev.deal.mapper.ApplicationEntityMapper;
 import ru.artemev.deal.mapper.ClientEntityMapper;
 import ru.artemev.deal.mapper.CreditEntityMapper;
@@ -87,7 +91,10 @@ public class DealServiceImpl implements DealService {
     ApplicationEntity applicationEntity =
         applicationRepository
             .findById(loanOfferDTO.getApplicationId())
-            .orElseThrow(RuntimeException::new);
+            .orElseThrow(
+                () ->
+                    new NotFoundException(
+                        loanOfferDTO.getApplicationId() + " not found in application repository"));
 
     List<ApplicationHistory> applicationHistory = applicationEntity.getStatusHistory();
     if (applicationHistory == null) {
@@ -131,7 +138,9 @@ public class DealServiceImpl implements DealService {
     log.info("====== Started completionOfRegistration =======");
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(id).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(id)
+            .orElseThrow(() -> new NotFoundException(id + " not found in application repository"));
 
     ClientEntity clientEntity = applicationEntity.getClientEntity();
 
@@ -164,7 +173,9 @@ public class DealServiceImpl implements DealService {
     log.info("creditDTO = " + creditDTO);
 
     if (creditDTO == null) {
-      throw new RuntimeException("CreditDTO received as null");
+      throw new BaseException(
+          HttpStatus.BAD_REQUEST,
+              new ApiError(this.getClass().toString(), "CreditDTO received as null"));
     }
 
     CreditEntity creditEntity = creditRepository.save(CreditEntityMapper.toClientEntity(creditDTO));
