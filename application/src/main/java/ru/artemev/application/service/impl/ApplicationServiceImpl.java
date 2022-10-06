@@ -2,8 +2,6 @@ package ru.artemev.application.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.artemev.application.client.DealClient;
 import ru.artemev.application.dto.LoanApplicationRequestDTO;
@@ -44,7 +42,7 @@ public class ApplicationServiceImpl implements ApplicationService {
       throw new ValidationException("Фамилия должно быть длинной от 2 до 30 символов");
 
     if (loanApplicationRequestDTO.getMiddleName() != null
-        &&( loanApplicationRequestDTO.getMiddleName().length() <= 2
+        && (loanApplicationRequestDTO.getMiddleName().length() <= 2
             || loanApplicationRequestDTO.getMiddleName().length() > 30))
       throw new ValidationException("Отчество должно быть длинной от 2 до 30 символов");
 
@@ -66,11 +64,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     if (!Pattern.matches("[\\d]{6}", loanApplicationRequestDTO.getPassportNumber()))
       throw new ValidationException("Номер паспорта введен некорректно");
 
-    ResponseEntity<List<LoanOfferDTO>> listResponseEntity = dealClient.calculationPossibleLoans(loanApplicationRequestDTO);
+    List<LoanOfferDTO> listResponseEntity =
+        dealClient.calculationPossibleLoans(loanApplicationRequestDTO);
 
     log.info("Finish getLoanOfferDtoList");
 
-    return listResponseEntity.getBody();
+    return listResponseEntity;
   }
 
   @Override
