@@ -8,10 +8,10 @@ import java.time.LocalDate;
 
 @Mapper
 public abstract class ApplicationEntityMapper {
-    public static ApplicationEntity toApplicationEntity(ClientEntity clientEntity) {
-        return ApplicationEntity.builder()
-                .clientEntity(clientEntity)
-                .creationDate(LocalDate.now())
-                .build();
-    }
+  public static ApplicationEntity toApplicationEntity(ClientEntity clientEntity) {
+    return ApplicationEntity.builder()
+        .clientEntity(clientEntity)
+        .creationDate(LocalDate.now())
+        .build();
+  }
 }
