@@ -13,10 +13,12 @@ import ru.artemev.deal.dto.ScoringDataDTO;
 import ru.artemev.deal.entity.ApplicationEntity;
 import ru.artemev.deal.entity.ClientEntity;
 import ru.artemev.deal.entity.CreditEntity;
+import ru.artemev.deal.mapper.ApplicationEntityMapper;
+import ru.artemev.deal.mapper.ClientEntityMapper;
+import ru.artemev.deal.mapper.CreditEntityMapper;
+import ru.artemev.deal.mapper.ScoringDataDTOMapper;
 import ru.artemev.deal.model.ApplicationHistory;
-import ru.artemev.deal.model.Passport;
 import ru.artemev.deal.model.enums.ApplicationStatus;
-import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
@@ -50,17 +52,22 @@ public class DealServiceImpl implements DealService {
      */
     log.info("======Started calculationPossibleLoans=======");
     log.info("Received request = " + loanApplicationRequestDTO);
+
     ClientEntity clientEntity =
-        clientRepository.save(loanApplicationRequestDTOToClientEntity(loanApplicationRequestDTO));
+        clientRepository.save(ClientEntityMapper.toClientEntity(loanApplicationRequestDTO));
     log.info("Created clientEntity = " + clientEntity);
+
     ApplicationEntity applicationEntity =
-        applicationRepository.save(loanApplicationRequestDTOToApplicationEntity(clientEntity));
+        applicationRepository.save(ApplicationEntityMapper.toApplicationEntity(clientEntity));
     log.info("Created applicationEntity = " + applicationEntity);
-    List<LoanOfferDTO> result = conveyorClient.getOffers(loanApplicationRequestDTO).getBody();
+
+    List<LoanOfferDTO> result = conveyorClient.getOffers(loanApplicationRequestDTO);
     log.info("Received request from conveyor service = " + result);
+
     if (result != null) {
       result.forEach(loanOfferDTO -> loanOfferDTO.setApplicationId(applicationEntity.getId()));
     }
+
     log.info("======Finished calculationPossibleLoans=======");
     return result;
   }
@@ -76,6 +83,7 @@ public class DealServiceImpl implements DealService {
      */
     log.info("======Started selectOneOfOffers=======");
     log.info("Received request = " + loanOfferDTO);
+
     ApplicationEntity applicationEntity =
         applicationRepository
             .findById(loanOfferDTO.getApplicationId())
@@ -97,13 +105,13 @@ public class DealServiceImpl implements DealService {
               .date(LocalDate.now())
               .build());
     }
+
     applicationEntity.setStatusHistory(applicationHistory);
-
     applicationEntity.setApplicationStatus(ApplicationStatus.PREAPPROVAL);
-
     applicationEntity.setAppliedOffer(loanOfferDTO);
 
     applicationRepository.save(applicationEntity);
+
     log.info("======Finished selectOneOfOffers=======");
   }
 
@@ -124,46 +132,16 @@ public class DealServiceImpl implements DealService {
 
     ApplicationEntity applicationEntity =
         applicationRepository.findById(id).orElseThrow(RuntimeException::new);
+
     ClientEntity clientEntity = applicationEntity.getClientEntity();
-    LoanOfferDTO loanOfferDTO = applicationEntity.getAppliedOffer();
+
     log.info("Received all Entity");
 
-    clientEntity.setGender(finishRegistrationRequestDTO.getGender());
-    clientEntity.setAccount(finishRegistrationRequestDTO.getAccount());
-    clientEntity.setDependentAmount(finishRegistrationRequestDTO.getDependentAmount());
-    clientEntity.setEmployment(finishRegistrationRequestDTO.getEmployment());
-    clientEntity.setMaritalStatus(finishRegistrationRequestDTO.getMaritalStatus());
-    clientEntity.setPassport(
-        Passport.builder()
-            .number(clientEntity.getPassport().getNumber())
-            .series(clientEntity.getPassport().getSeries())
-            .issueBranch(finishRegistrationRequestDTO.getPassportIssueBranch())
-            .issueDate(finishRegistrationRequestDTO.getPassportIssueDate())
-            .build());
-
+    ClientEntityMapper.fieldClientEntity(clientEntity, finishRegistrationRequestDTO);
+    applicationEntity.setClientEntity(clientEntity);
     log.info("Fielded clientEntity");
 
-    ScoringDataDTO scoringDataDTO =
-        ScoringDataDTO.builder()
-            .amount(loanOfferDTO.getTotalAmount())
-            .term(loanOfferDTO.getTerm())
-            .firstName(clientEntity.getFirstName())
-            .lastName(clientEntity.getLastName())
-            .middleName(clientEntity.getMiddleName())
-            .gender(clientEntity.getGender())
-            .birthday(clientEntity.getBirthday())
-            .passportSeries(clientEntity.getPassport().getSeries())
-            .passportNumber(clientEntity.getPassport().getNumber())
-            .passportIssueBranch(clientEntity.getPassport().getIssueBranch())
-            .passportIssueDate(clientEntity.getPassport().getIssueDate())
-            .maritalStatus(clientEntity.getMaritalStatus())
-            .dependentAmount(clientEntity.getDependentAmount())
-            .employment(clientEntity.getEmployment())
-            .account(clientEntity.getAccount())
-            .insuranceEnabled(loanOfferDTO.isInsuranceEnabled())
-            .salaryClient(loanOfferDTO.isSalaryClient())
-            .build();
-
+    ScoringDataDTO scoringDataDTO = ScoringDataDTOMapper.toScoringDataDTO(applicationEntity);
     log.info("Fielded scoringDataDTO = " + scoringDataDTO);
 
     List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
@@ -189,19 +167,8 @@ public class DealServiceImpl implements DealService {
       throw new RuntimeException("CreditDTO received as null");
     }
 
-    CreditEntity creditEntity =
-        creditRepository.save(
-            CreditEntity.builder()
-                .amount(creditDTO.getAmount())
-                .term(creditDTO.getTerm())
-                .monthlyPayment(creditDTO.getMonthlyPayment())
-                .rate(creditDTO.getRate())
-                .psk(creditDTO.getPsk())
-                .paymentSchedule(creditDTO.getPaymentSchedule())
-                .insuranceEnabled(creditDTO.getInsuranceEnabled())
-                .salaryClient(creditDTO.getSalaryClient())
-                .creditStatus(CreditStatus.CALCULATED)
-                .build());
+    CreditEntity creditEntity = creditRepository.save(CreditEntityMapper.toClientEntity(creditDTO));
+    applicationEntity.setCreditEntity(creditEntity);
 
     log.info("Saved creditEntity");
 
@@ -221,29 +188,5 @@ public class DealServiceImpl implements DealService {
     applicationRepository.save(applicationEntity);
     log.info("Saved applicationEntity");
     log.info("====== Finished completionOfRegistration =======");
-  }
-
-  private ApplicationEntity loanApplicationRequestDTOToApplicationEntity(
-      ClientEntity clientEntity) {
-    return ApplicationEntity.builder()
-        .clientEntity(clientEntity)
-        .creationDate(LocalDate.now())
-        .build();
-  }
-
-  private ClientEntity loanApplicationRequestDTOToClientEntity(
-      LoanApplicationRequestDTO loanApplicationRequestDTO) {
-    return ClientEntity.builder()
-        .firstName(loanApplicationRequestDTO.getFirstName())
-        .lastName(loanApplicationRequestDTO.getLastName())
-        .middleName(loanApplicationRequestDTO.getMiddleName())
-        .birthday(loanApplicationRequestDTO.getBirthday())
-        .email(loanApplicationRequestDTO.getEmail())
-        .passport(
-            Passport.builder()
-                .series(loanApplicationRequestDTO.getPassportSeries())
-                .number(loanApplicationRequestDTO.getPassportNumber())
-                .build())
-        .build();
   }
 }
