@@ -23,10 +23,10 @@ public class LoanOfferDTO {
   private final BigDecimal rate;
 
   @Schema(description = "Страховка", example = "true")
-  private final boolean isInsuranceEnabled;
+  private final boolean insuranceEnabled;
 
   @Schema(description = "Зарплатный клиент", example = "true")
-  private final boolean isSalaryClient;
+  private final boolean salaryClient;
 
   @Schema(description = "Номер предложения", example = "4")
   private Long applicationId;
