@@ -1,4 +1,4 @@
-package ru.artemev.conveyor.exception;
+package ru.artemev.deal.exception;
 
 import org.springframework.http.HttpStatus;
 

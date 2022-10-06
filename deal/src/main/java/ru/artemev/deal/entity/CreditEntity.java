@@ -7,10 +7,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import ru.artemev.deal.dto.CreditStatus;
-import ru.artemev.deal.dto.PaymentScheduleElement;
+import ru.artemev.deal.model.PaymentScheduleElement;
+import ru.artemev.deal.model.enums.CreditStatus;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -45,16 +53,16 @@ public class CreditEntity {
   @Type(type = "jsonb")
   private List<PaymentScheduleElement> paymentSchedule;
 
-  @Column(name = "is_insurance_enabled", nullable = false)
+  @Column(name = "insurance_enabled", nullable = false)
   private Boolean insuranceEnabled;
 
-  @Column(name = "is_salary_client", nullable = false)
+  @Column(name = "salary_client", nullable = false)
   private Boolean salaryClient;
 
   @Column(name = "credit_status", nullable = false)
   @Enumerated(EnumType.STRING)
   private CreditStatus creditStatus;
 
-  @OneToOne(mappedBy = "creditEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "creditEntity")
   private ApplicationEntity applicationEntity;
 }

@@ -1,15 +1,21 @@
 package ru.artemev.conveyor.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
-import lombok.Builder;
 import lombok.Data;
+import ru.artemev.conveyor.model.enums.Gender;
+import ru.artemev.conveyor.model.enums.MaritalStatus;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-@Builder
 @Schema(description = "Данные для оценки")
 public class ScoringDataDTO {
   @NotNull
@@ -37,7 +43,7 @@ public class ScoringDataDTO {
   @Schema(description = "Отчество", example = "Петрович")
   private String middleName;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Пол", example = "MALE")
   private Gender gender;
 
@@ -55,16 +61,16 @@ public class ScoringDataDTO {
   @Schema(description = "Номер пасорта", example = "567890")
   private String passportNumber;
 
-  @NotBlank
+  @NotNull
   @Past
   @Schema(description = "Дата выдачи паспорта", example = "2000-01-01")
   private LocalDate passportIssueDate;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Кем выдан паспорт", example = "Moscow")
   private String passportIssueBranch;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Семейное положение", example = "SINGLE")
   private MaritalStatus maritalStatus;
 

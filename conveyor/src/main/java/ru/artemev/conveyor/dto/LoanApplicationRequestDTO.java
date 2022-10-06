@@ -1,13 +1,21 @@
 package ru.artemev.conveyor.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
+@Builder
 @Schema(description = "Заявка на кредит")
 public class LoanApplicationRequestDTO {
   @NotNull
@@ -20,17 +28,17 @@ public class LoanApplicationRequestDTO {
   @Schema(description = "Срок займа", example = "12")
   private Integer term;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Имя", example = "Петя")
   private String firstName;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Фамилия", example = "Петров")
   private String lastName;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Отчество", example = "Петрович")
   private String middleName;

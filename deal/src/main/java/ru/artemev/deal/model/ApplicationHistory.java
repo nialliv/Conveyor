@@ -1,9 +1,8 @@
-package ru.artemev.deal.dto;
+package ru.artemev.deal.model;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.annotations.TypeDef;
+import ru.artemev.deal.model.enums.ApplicationStatus;
 
 import java.io.Serializable;
 import java.time.LocalDate;

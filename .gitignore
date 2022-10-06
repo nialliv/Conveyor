@@ -15,10 +15,14 @@ target/
 
 ### IntelliJ IDEA ###
 .idea
+<<<<<<< HEAD
 .jpb
+=======
+>>>>>>> feature/MS-conveyor/mvp1
 *.iws
 *.iml
 *.ipr
+*.jpb
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,4 +36,7 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/MS-conveyor/mvp1

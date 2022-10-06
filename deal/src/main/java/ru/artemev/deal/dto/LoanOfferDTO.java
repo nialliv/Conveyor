@@ -10,12 +10,6 @@ import java.math.BigDecimal;
 @Builder
 @Schema(description = "Предложение по кредиту")
 public class LoanOfferDTO {
-  @Schema(description = "Номер предложения", example = "4")
-  private Long applicationId;
-
-  @Schema(description = "Запрашиваемая сумма", example = "100000")
-  private BigDecimal requestedAmount;
-
   @Schema(description = "Итоговая сумма", example = "15000")
   private final BigDecimal totalAmount;
 
@@ -33,4 +27,10 @@ public class LoanOfferDTO {
 
   @Schema(description = "Зарплатный клиент", example = "true")
   private final boolean salaryClient;
+
+  @Schema(description = "Номер предложения", example = "4")
+  private Long applicationId;
+
+  @Schema(description = "Запрашиваемая сумма", example = "100000")
+  private BigDecimal requestedAmount;
 }
