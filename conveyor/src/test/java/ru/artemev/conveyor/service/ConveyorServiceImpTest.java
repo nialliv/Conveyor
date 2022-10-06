@@ -50,8 +50,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9583.33))
                 .rate(BigDecimal.valueOf(15))
-                .isInsuranceEnabled(false)
-                .isSalaryClient(false)
+                .insuranceEnabled(false)
+                .salaryClient(false)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(3L)
@@ -60,8 +60,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9333.33))
                 .rate(BigDecimal.valueOf(12))
-                .isInsuranceEnabled(true)
-                .isSalaryClient(false)
+                .insuranceEnabled(true)
+                .salaryClient(false)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(2L)
@@ -70,8 +70,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9253.33))
                 .rate(BigDecimal.valueOf(11))
-                .isInsuranceEnabled(false)
-                .isSalaryClient(true)
+                .insuranceEnabled(false)
+                .salaryClient(true)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(4L)
@@ -80,8 +80,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9003.33))
                 .rate(BigDecimal.valueOf(8))
-                .isInsuranceEnabled(true)
-                .isSalaryClient(true)
+                .insuranceEnabled(true)
+                .salaryClient(true)
                 .build());
 
     assertEquals(loanOfferDTOList, loanOfferDTOListTest);
@@ -107,8 +107,8 @@ class ConveyorServiceImpTest {
                 .workExperienceTotal(12)
                 .workExperienceCurrent(3)
                 .build());
-    when(scoringDataDTO.getIsInsuranceEnabled()).thenReturn(true);
-    when(scoringDataDTO.getIsSalaryClient()).thenReturn(true);
+    when(scoringDataDTO.getInsuranceEnabled()).thenReturn(true);
+    when(scoringDataDTO.getSalaryClient()).thenReturn(true);
 
     CreditDTO creditDTO = conveyorService.getCreditDto(scoringDataDTO);
 
@@ -119,8 +119,8 @@ class ConveyorServiceImpTest {
             .monthlyPayment(BigDecimal.valueOf(33663.33))
             .rate(BigDecimal.valueOf(4))
             .psk(BigDecimal.valueOf(100990))
-            .isInsuranceEnabled(true)
-            .isSalaryClient(true)
+            .insuranceEnabled(true)
+            .salaryClient(true)
             .paymentSchedule(
                 List.of(
                     PaymentScheduleElement.builder()
