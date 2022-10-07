@@ -1,7 +1,9 @@
 package ru.artemev.application.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,10 +12,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
+@Builder
 @Schema(description = "Заявка на кредит")
 public class LoanApplicationRequestDTO {
   @NotNull
-  @Schema(description = "Сумма кредита", example = "100000")
+  @Schema(description = "Сумма кредита", example = "10000")
   private BigDecimal amount;
 
   @NotNull

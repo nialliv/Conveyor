@@ -20,8 +20,8 @@ import java.time.LocalDate;
 @Schema(description = "Заявка на кредит")
 public class LoanApplicationRequestDTO {
   @NotNull
-  @DecimalMin(value = "100000", message = "Сумма не может быть меньше 100 000р")
-  @Schema(description = "Сумма кредита", example = "100000")
+  @DecimalMin(value = "10000", message = "Сумма не может быть меньше 10 000р")
+  @Schema(description = "Сумма кредита", example = "10000")
   private BigDecimal amount;
 
   @Min(value = 6, message = "Срок займа не может быть меньше 6 месяцев")
