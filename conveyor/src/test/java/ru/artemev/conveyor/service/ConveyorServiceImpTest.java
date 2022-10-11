@@ -125,7 +125,7 @@ class ConveyorServiceImpTest {
                 List.of(
                     PaymentScheduleElement.builder()
                         .number(1)
-                        .date(LocalDate.of(2022, 11, 3))
+                        .date(LocalDate.of(2022, 11, 11))
                         .totalPayment(BigDecimal.valueOf(33663.33))
                         .interestPayment(BigDecimal.valueOf(1333.33))
                         .debtPayment(BigDecimal.valueOf(33333.33))
@@ -133,7 +133,7 @@ class ConveyorServiceImpTest {
                         .build(),
                     PaymentScheduleElement.builder()
                         .number(2)
-                        .date(LocalDate.of(2022, 12, 3))
+                        .date(LocalDate.of(2022, 12, 11))
                         .totalPayment(BigDecimal.valueOf(67326.66))
                         .interestPayment(BigDecimal.valueOf(1333.33))
                         .debtPayment(BigDecimal.valueOf(33333.33))
@@ -141,7 +141,7 @@ class ConveyorServiceImpTest {
                         .build(),
                     PaymentScheduleElement.builder()
                         .number(3)
-                        .date(LocalDate.of(2023, 1, 3))
+                        .date(LocalDate.of(2023, 1, 11))
                         .totalPayment(BigDecimal.valueOf(100989.99))
                         .interestPayment(BigDecimal.valueOf(1333.33))
                         .debtPayment(BigDecimal.valueOf(33333.33))
