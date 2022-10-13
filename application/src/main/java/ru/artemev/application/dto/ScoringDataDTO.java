@@ -30,22 +30,22 @@ public class ScoringDataDTO {
   @Schema(description = "Срок займа", example = "12")
   private Integer term;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Имя", example = "Петя")
   private String firstName;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Фамилия", example = "Петров")
   private String lastName;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Отчество", example = "Петрович")
   private String middleName;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Пол", example = "MALE")
   private Gender gender;
 
@@ -63,16 +63,16 @@ public class ScoringDataDTO {
   @Schema(description = "Номер пасорта", example = "567890")
   private String passportNumber;
 
-  @NotBlank
+  @NotNull
   @Past
   @Schema(description = "Дата выдачи паспорта", example = "2000-01-01")
   private LocalDate passportIssueDate;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Кем выдан паспорт", example = "Moscow")
   private String passportIssueBranch;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Семейное положение", example = "SINGLE")
   private MaritalStatus maritalStatus;
 
