@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.artemev.deal.dto.FinishRegistrationRequestDTO;
 import ru.artemev.deal.dto.LoanApplicationRequestDTO;
 import ru.artemev.deal.dto.LoanOfferDTO;
+import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.service.DealService;
 
 import javax.validation.Valid;
@@ -57,5 +58,29 @@ public class DealController {
     if (bindingResult.hasErrors())
       throw new ValidationException(bindingResult.getModel().toString());
     dealService.completionOfRegistration(id, finishRegistrationRequestDTO);
+  }
+
+  @PutMapping("/deal/admin/{applicationId}/status")
+  public void updateStatus(
+      @PathVariable Long applicationId, @RequestBody ApplicationStatus applicationStatus) {
+    dealService.updateApplicationStatus(applicationId, applicationStatus);
+  }
+
+  @PostMapping("/deal/document/{applicationId}/send")
+  @Operation(summary = "Запрос на отправку документов")
+  public void sendDocuments(@PathVariable Long applicationId) {
+    dealService.sendDocuments(applicationId);
+  }
+
+  @PostMapping("/deal/document/{applicationId}/sign")
+  @Operation(summary = "Запрос на подписание документов")
+  public void signDocuments(@PathVariable Long applicationId) {
+    dealService.signDocuments(applicationId);
+  }
+
+  @PostMapping("/deal/document/{applicationId}/code")
+  @Operation(summary = "Подписание документов")
+  public void codeDocuments(@PathVariable Long applicationId, @RequestBody Integer sesCode) {
+    dealService.codeDocuments(applicationId, sesCode);
   }
 }

@@ -2,6 +2,7 @@ package ru.artemev.deal.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.artemev.deal.client.ConveyorClient;
@@ -18,7 +19,10 @@ import ru.artemev.deal.mapper.ClientEntityMapper;
 import ru.artemev.deal.mapper.CreditEntityMapper;
 import ru.artemev.deal.mapper.ScoringDataDTOMapper;
 import ru.artemev.deal.model.ApplicationHistory;
+import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
+import ru.artemev.deal.model.enums.CreditStatus;
+import ru.artemev.deal.model.enums.Theme;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
@@ -26,6 +30,7 @@ import ru.artemev.deal.service.DealService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
@@ -38,6 +43,8 @@ public class DealServiceImpl implements DealService {
   @Autowired private ClientRepository clientRepository;
 
   @Autowired private ConveyorClient conveyorClient;
+
+  @Autowired private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
 
   @Override
   @Transactional
@@ -188,5 +195,91 @@ public class DealServiceImpl implements DealService {
     applicationRepository.save(applicationEntity);
     log.info("Saved applicationEntity");
     log.info("====== Finished completionOfRegistration =======");
+  }
+
+  @Override
+  public void updateApplicationStatus(Long applicationId, ApplicationStatus applicationStatus) {
+    log.info("====== Started updateApplicationStatus =======");
+    log.info(
+        "Received applicationId -> "
+            + applicationId
+            + "; with applicationStatus -> "
+            + applicationStatus);
+
+    ApplicationEntity applicationEntity =
+        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+    applicationEntity.setApplicationStatus(applicationStatus);
+    List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
+    applicationHistoryList.add(
+        ApplicationHistory.builder().date(LocalDate.now()).status(applicationStatus).build());
+    applicationEntity.setStatusHistory(applicationHistoryList);
+
+    applicationRepository.save(applicationEntity);
+
+    log.info("====== Finished updateApplicationStatus =======");
+  }
+
+  @Override
+  public void sendDocuments(Long applicationId) {
+    log.info("====== Started sendDocuments =======");
+
+    updateApplicationStatus(applicationId, ApplicationStatus.PREPARE_DOCUMENTS);
+    kafkaTemplate.send(
+        "conveyor-send-documents",
+        applicationId,
+        new EmailMessage("example@ya.ru", Theme.SEND_DOCUMENTS, applicationId));
+
+    log.info("====== Finished sendDocuments =======");
+  }
+
+  @Override
+  public void signDocuments(Long applicationId) {
+    log.info("====== Started signDocuments =======");
+
+    Integer sesCode = ThreadLocalRandom.current().nextInt(1000, 10_001);
+    log.info("Generated sesCode -> " + sesCode);
+
+    ApplicationEntity applicationEntity =
+        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+    applicationEntity.setSesCode(String.valueOf(sesCode));
+    applicationRepository.save(applicationEntity);
+
+    kafkaTemplate.send(
+        "conveyor-sign-documents",
+        applicationId,
+        new EmailMessage("example@ya.ru", Theme.SIGN_DOCUMENTS, applicationId));
+
+    log.info("====== Finished signDocuments =======");
+  }
+
+  @Override
+  public void codeDocuments(Long applicationId, Integer sesCode) {
+    log.info("====== Started codeDocuments =======");
+
+    ApplicationEntity applicationEntity =
+        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+    CreditEntity creditEntity = applicationEntity.getCreditEntity();
+
+    applicationEntity.setApplicationStatus(ApplicationStatus.DOCUMENT_SIGNED);
+
+    List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
+    applicationHistoryList.add(
+        ApplicationHistory.builder()
+            .date(LocalDate.now())
+            .status(ApplicationStatus.DOCUMENT_SIGNED)
+            .build());
+    applicationEntity.setStatusHistory(applicationHistoryList);
+
+    creditEntity.setCreditStatus(CreditStatus.ISSUED);
+
+    creditRepository.save(creditEntity);
+    applicationRepository.save(applicationEntity);
+
+    kafkaTemplate.send(
+            "conveyor-credit",
+            applicationId,
+            new EmailMessage("example@ya.ru", Theme.CREDIT_ISSUED, applicationId));
+
+    log.info("====== Finished codeDocuments =======");
   }
 }
