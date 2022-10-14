@@ -69,7 +69,7 @@ public class ConveyorServiceImp implements ConveyorService {
             .amount(scoringDataDTO.getAmount())
             .term(term)
             .rate(rate)
-            .psk(psk.setScale(0))
+            .psk(psk)
             .monthlyPayment(monthlyPayment)
             .insuranceEnabled(scoringDataDTO.getInsuranceEnabled())
             .salaryClient(scoringDataDTO.getSalaryClient())
@@ -122,7 +122,7 @@ public class ConveyorServiceImp implements ConveyorService {
         (requestedAmount.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN))
             .multiply(monthlyPercent)
             .multiply(BigDecimal.valueOf(term));
-    BigDecimal totalAmount = requestedAmount.add(creditCoast).setScale(0);
+    BigDecimal totalAmount = requestedAmount.add(creditCoast);
     BigDecimal monthlyPayment =
         totalAmount.divide(BigDecimal.valueOf(term), 2, RoundingMode.HALF_EVEN);
 

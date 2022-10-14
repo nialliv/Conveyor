@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @Schema(description = "Данные для оценки")
 public class ScoringDataDTO {
   @NotNull
-  @DecimalMin(value = "100000", message = "Сумма не может быть меньше 100 000р")
+  @DecimalMin(value = "10000", message = "Сумма не может быть меньше 10 000р")
   @Schema(description = "Сумма кредита", example = "100000")
   private BigDecimal amount;
 
