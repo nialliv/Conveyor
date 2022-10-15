@@ -119,6 +119,12 @@ public class DealServiceImpl implements DealService {
 
     applicationRepository.save(applicationEntity);
 
+    kafkaTemplate.send(
+            "conveyor-finish-registration",
+            applicationEntity.getId(),
+            new EmailMessage(
+                    applicationEntity.getClientEntity().getEmail(), Theme.FINISH_REGISTRATION, applicationEntity.getId()));
+
     log.info("======Finished selectOneOfOffers=======");
   }
 
@@ -194,6 +200,13 @@ public class DealServiceImpl implements DealService {
     log.info("Saved clientEntity");
     applicationRepository.save(applicationEntity);
     log.info("Saved applicationEntity");
+
+    kafkaTemplate.send(
+            "conveyor-create-documents",
+            applicationEntity.getId(),
+            new EmailMessage(
+                    applicationEntity.getClientEntity().getEmail(), Theme.CREATE_DOCUMENTS, applicationEntity.getId()));
+
     log.info("====== Finished completionOfRegistration =======");
   }
 
@@ -224,10 +237,13 @@ public class DealServiceImpl implements DealService {
     log.info("====== Started sendDocuments =======");
 
     updateApplicationStatus(applicationId, ApplicationStatus.PREPARE_DOCUMENTS);
+    ApplicationEntity applicationEntity =
+        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
     kafkaTemplate.send(
         "conveyor-send-documents",
         applicationId,
-        new EmailMessage("example@ya.ru", Theme.SEND_DOCUMENTS, applicationId));
+        new EmailMessage(
+            applicationEntity.getClientEntity().getEmail(), Theme.SEND_DOCUMENTS, applicationId));
 
     log.info("====== Finished sendDocuments =======");
   }
@@ -247,7 +263,8 @@ public class DealServiceImpl implements DealService {
     kafkaTemplate.send(
         "conveyor-sign-documents",
         applicationId,
-        new EmailMessage("example@ya.ru", Theme.SIGN_DOCUMENTS, applicationId));
+        new EmailMessage(
+            applicationEntity.getClientEntity().getEmail(), Theme.SIGN_DOCUMENTS, applicationId));
 
     log.info("====== Finished signDocuments =======");
   }
@@ -276,9 +293,10 @@ public class DealServiceImpl implements DealService {
     applicationRepository.save(applicationEntity);
 
     kafkaTemplate.send(
-            "conveyor-credit",
-            applicationId,
-            new EmailMessage("example@ya.ru", Theme.CREDIT_ISSUED, applicationId));
+        "conveyor-credit",
+        applicationId,
+        new EmailMessage(
+            applicationEntity.getClientEntity().getEmail(), Theme.CREDIT_ISSUED, applicationId));
 
     log.info("====== Finished codeDocuments =======");
   }
