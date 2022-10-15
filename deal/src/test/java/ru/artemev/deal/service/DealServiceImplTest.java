@@ -2,9 +2,13 @@ package ru.artemev.deal.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.kafka.core.KafkaTemplate;
 import ru.artemev.deal.dto.EmploymentDTO;
 import ru.artemev.deal.dto.FinishRegistrationRequestDTO;
 import ru.artemev.deal.dto.LoanApplicationRequestDTO;
@@ -15,12 +19,14 @@ import ru.artemev.deal.entity.CreditEntity;
 import ru.artemev.deal.mapper.ApplicationEntityMapper;
 import ru.artemev.deal.mapper.ClientEntityMapper;
 import ru.artemev.deal.model.ApplicationHistory;
+import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.model.enums.EmploymentStatus;
 import ru.artemev.deal.model.enums.Gender;
 import ru.artemev.deal.model.enums.MaritalStatus;
 import ru.artemev.deal.model.enums.Position;
+import ru.artemev.deal.model.enums.Theme;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
@@ -31,6 +37,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
@@ -43,6 +54,9 @@ class DealServiceImplTest {
   @Autowired private ApplicationRepository applicationRepository;
 
   @Autowired private CreditRepository creditRepository;
+
+  @MockBean
+  private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
 
   @Test
   void calculationPossibleLoans() {
@@ -161,6 +175,8 @@ class DealServiceImplTest {
     assertEquals(applicationHistoryList.get(0).getDate(), LocalDate.now());
     assertEquals(applicationEntity.getApplicationStatus(), ApplicationStatus.PREAPPROVAL);
     assertEquals(applicationEntity.getAppliedOffer(), loanOfferDTOList.get(0));
+    verify(kafkaTemplate, VerificationModeFactory.times(1)).send("conveyor-create-documents", 2L, new EmailMessage("example@test.ru", Theme.CREATE_DOCUMENTS, 2L));
+
   }
 
   @Test
@@ -213,5 +229,7 @@ class DealServiceImplTest {
 
     assertEquals(creditEntity.getCreditStatus(), CreditStatus.CALCULATED);
     assertEquals(applicationEntity.getApplicationStatus(), ApplicationStatus.CC_APPROVED);
+
+    verify(kafkaTemplate, VerificationModeFactory.times(1)).send("conveyor-finish-registration", 2L, new EmailMessage("example@test.ru", Theme.FINISH_REGISTRATION, 2L));
   }
 }
