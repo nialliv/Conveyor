@@ -10,6 +10,7 @@ import ru.artemev.dossier.client.DealClient;
 import ru.artemev.dossier.model.EmailMessage;
 import ru.artemev.dossier.model.enums.ApplicationStatus;
 import ru.artemev.dossier.service.DossierService;
+import ru.artemev.dossier.service.EmailService;
 
 @Service
 @Slf4j
@@ -17,7 +18,37 @@ public class DossierServiceImpl implements DossierService {
 
   @Autowired private DealClient dealClient;
 
+  @Autowired private EmailService emailService;
+
   private ObjectMapper objectMapper = new ObjectMapper();
+
+  @Override
+  @KafkaListener(topics = {"conveyor-finish-registration"})
+  public void finishRegistration(String message) throws JsonProcessingException {
+    log.info("====== Started finishRegistration =======");
+    log.info("Received String in Dossier => " + message);
+
+    EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
+    log.info("Mapping result => " + emailMessageEntity.toString());
+
+    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Finish registration");
+
+    log.info("====== Finished finishRegistration =======");
+  }
+
+  @Override
+  @KafkaListener(topics = {"conveyor-create-documents"})
+  public void createDocuments(String message) throws JsonProcessingException {
+    log.info("====== Started createDocuments =======");
+    log.info("Received String in Dossier => " + message);
+
+    EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
+    log.info("Mapping result => " + emailMessageEntity.toString());
+
+    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Create document");
+
+    log.info("====== Finished createDocuments =======");
+  }
 
   @Override
   @KafkaListener(topics = {"conveyor-send-documents"})
@@ -31,9 +62,7 @@ public class DossierServiceImpl implements DossierService {
     dealClient.updateStatus(
         emailMessageEntity.getApplicationId(), ApplicationStatus.DOCUMENT_CREATED);
 
-    /*
-    TODO: добавить отправку email
-     */
+    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Your loan documents");
 
     log.info("====== Finished sendDocuments =======");
   }
@@ -46,9 +75,7 @@ public class DossierServiceImpl implements DossierService {
     EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
     log.info("Mapping result => " + emailMessageEntity.toString());
 
-    /*
-    TODO: добавить отправку email
-     */
+    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Sign documents with SES code");
 
     log.info("====== Finished signDocuments =======");
   }
@@ -61,10 +88,10 @@ public class DossierServiceImpl implements DossierService {
     EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
     log.info("Mapping result => " + emailMessageEntity.toString());
 
-    /*
-    TODO: добавить отправку email
-     */
+    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Credit issued");
 
     log.info("====== Finished codeDocuments =======");
   }
+
+
 }

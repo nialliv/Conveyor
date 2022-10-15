@@ -8,4 +8,8 @@ public interface DossierService {
   void signDocuments(String message) throws JsonProcessingException;
 
   void codeDocuments(String message) throws JsonProcessingException;
+
+  void finishRegistration(String message) throws JsonProcessingException;
+
+  void createDocuments(String message) throws JsonProcessingException;
 }
