@@ -1,4 +1,4 @@
-package ru.artemev.conveyor.dto;
+package ru.artemev.deal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -7,6 +7,7 @@ import lombok.Data;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
@@ -29,17 +30,17 @@ public class LoanApplicationRequestDTO {
   private Integer term;
 
   @NotNull
-  @Size(min = 2, max = 100)
+  @Size(min = 2, max = 30)
   @Schema(description = "Имя", example = "Петя")
   private String firstName;
 
   @NotNull
-  @Size(min = 2, max = 100)
+  @Size(min = 2, max = 30)
   @Schema(description = "Фамилия", example = "Петров")
   private String lastName;
 
-  @NotNull
-  @Size(min = 2, max = 100)
+  @NotBlank
+  @Size(min = 2, max = 30)
   @Schema(description = "Отчество", example = "Петрович")
   private String middleName;
 

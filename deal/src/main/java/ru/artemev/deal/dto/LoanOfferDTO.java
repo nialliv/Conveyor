@@ -1,4 +1,4 @@
-package ru.artemev.conveyor.dto;
+package ru.artemev.deal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

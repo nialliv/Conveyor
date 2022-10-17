@@ -1,9 +1,9 @@
-package ru.artemev.conveyor.dto;
+package ru.artemev.application.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
-import ru.artemev.conveyor.model.PaymentScheduleElement;
+import ru.artemev.application.model.PaymentScheduleElement;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -1,13 +1,13 @@
-package ru.artemev.conveyor.dto;
+package ru.artemev.application.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Data;
-import ru.artemev.conveyor.model.enums.Gender;
-import ru.artemev.conveyor.model.enums.MaritalStatus;
+import ru.artemev.application.model.enums.Gender;
+import ru.artemev.application.model.enums.MaritalStatus;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
+@Builder
 @Schema(description = "Данные для оценки")
 public class ScoringDataDTO {
   @NotNull

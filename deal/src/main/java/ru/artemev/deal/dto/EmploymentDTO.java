@@ -1,15 +1,15 @@
-package ru.artemev.conveyor.dto;
+package ru.artemev.deal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
-import ru.artemev.conveyor.model.enums.EmploymentStatus;
-import ru.artemev.conveyor.model.enums.Position;
+import ru.artemev.deal.model.enums.EmploymentStatus;
+import ru.artemev.deal.model.enums.Position;
 
 import java.math.BigDecimal;
 
-@Builder
 @Data
+@Builder
 @Schema(description = "Трудоустройство")
 public class EmploymentDTO {
   @Schema(description = "Оклад", example = "15000")

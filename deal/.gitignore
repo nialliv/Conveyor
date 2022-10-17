@@ -1,9 +1,6 @@
 HELP.md
 target/
-.mvn/
-mvn*
-*.jar
-*.zip
+!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -18,11 +15,9 @@ mvn*
 
 ### IntelliJ IDEA ###
 .idea
-.jpb
 *.iws
 *.iml
 *.ipr
-*.jpb
 
 ### NetBeans ###
 /nbproject/private/
@@ -36,4 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
