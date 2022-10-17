@@ -51,6 +51,7 @@ public class ConveyorServiceImp implements ConveyorService {
   @Override
   public CreditDTO getCreditDto(ScoringDataDTO scoringDataDTO) {
     log.info("Started generating CreditDTO");
+    log.info("Received ScoringDataDTO -> " + scoringDataDTO);
     if (!validateData(scoringDataDTO)) throw new ValidationException("Ошибка валидации");
     BigDecimal rate = BigDecimal.valueOf(baseRate);
     rate = getRateByInsurance(scoringDataDTO.getInsuranceEnabled(), rate);
