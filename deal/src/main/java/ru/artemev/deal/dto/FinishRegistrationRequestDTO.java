@@ -6,7 +6,6 @@ import lombok.Data;
 import ru.artemev.deal.model.enums.Gender;
 import ru.artemev.deal.model.enums.MaritalStatus;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
@@ -15,11 +14,11 @@ import java.time.LocalDate;
 @Builder
 @Schema(description = "Запрос на завершение регистрации")
 public class FinishRegistrationRequestDTO {
-  @NotBlank
+  @NotNull
   @Schema(description = "Пол", example = "MALE")
   private Gender gender;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Семейное положение", example = "SINGLE")
   private MaritalStatus maritalStatus;
 
@@ -27,12 +26,12 @@ public class FinishRegistrationRequestDTO {
   @Schema(description = "Количество иждивенцев", example = "1")
   private Integer dependentAmount;
 
-  @NotBlank
+  @NotNull
   @Past
   @Schema(description = "Дата выдачи паспорта", example = "2000-01-01")
   private LocalDate passportIssueDate;
 
-  @NotBlank
+  @NotNull
   @Schema(description = "Кем выдан паспорт", example = "Moscow")
   private String passportIssueBranch;
 

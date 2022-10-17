@@ -49,15 +49,15 @@ public class DealController {
     dealService.selectOneOfOffers(loanOfferDTO);
   }
 
-  @PutMapping("/deal/calculate/{id}")
+  @PutMapping("/deal/calculate/{applicationId}")
   @Operation(summary = "Завершение регистрации + полный подсчёт кредита")
   public void completionOfRegistration(
-      @PathVariable Long id,
+      @PathVariable Long applicationId,
       @RequestBody @Valid FinishRegistrationRequestDTO finishRegistrationRequestDTO,
       BindingResult bindingResult) {
     if (bindingResult.hasErrors())
       throw new ValidationException(bindingResult.getModel().toString());
-    dealService.completionOfRegistration(id, finishRegistrationRequestDTO);
+    dealService.completionOfRegistration(applicationId, finishRegistrationRequestDTO);
   }
 
   @PutMapping("/deal/admin/{applicationId}/status")
@@ -66,19 +66,19 @@ public class DealController {
     dealService.updateApplicationStatus(applicationId, applicationStatus);
   }
 
-  @PostMapping("/deal/document/{applicationId}/send")
+  @PutMapping("/deal/document/{applicationId}/send")
   @Operation(summary = "Запрос на отправку документов")
   public void sendDocuments(@PathVariable Long applicationId) {
     dealService.sendDocuments(applicationId);
   }
 
-  @PostMapping("/deal/document/{applicationId}/sign")
+  @PutMapping("/deal/document/{applicationId}/sign")
   @Operation(summary = "Запрос на подписание документов")
   public void signDocuments(@PathVariable Long applicationId) {
     dealService.signDocuments(applicationId);
   }
 
-  @PostMapping("/deal/document/{applicationId}/code")
+  @PutMapping("/deal/document/{applicationId}/code")
   @Operation(summary = "Подписание документов")
   public void codeDocuments(@PathVariable Long applicationId, @RequestBody Integer sesCode) {
     dealService.codeDocuments(applicationId, sesCode);
