@@ -29,18 +29,18 @@ public class LoanApplicationRequestDTO {
   @Schema(description = "Срок займа", example = "12")
   private Integer term;
 
-  @NotBlank
-  @Size(min = 2, max = 100)
+  @NotNull
+  @Size(min = 2, max = 30)
   @Schema(description = "Имя", example = "Петя")
   private String firstName;
 
-  @NotBlank
-  @Size(min = 2, max = 100)
+  @NotNull
+  @Size(min = 2, max = 30)
   @Schema(description = "Фамилия", example = "Петров")
   private String lastName;
 
   @NotBlank
-  @Size(min = 2, max = 100)
+  @Size(min = 2, max = 30)
   @Schema(description = "Отчество", example = "Петрович")
   private String middleName;
 

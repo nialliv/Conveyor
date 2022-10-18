@@ -28,17 +28,17 @@ public class ScoringDataDTO {
   @Schema(description = "Срок займа", example = "12")
   private Integer term;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Имя", example = "Петя")
   private String firstName;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Фамилия", example = "Петров")
   private String lastName;
 
-  @NotBlank
+  @NotNull
   @Size(min = 2, max = 100)
   @Schema(description = "Отчество", example = "Петрович")
   private String middleName;
@@ -88,9 +88,9 @@ public class ScoringDataDTO {
 
   @NotNull
   @Schema(description = "Страховка", example = "true")
-  private Boolean insuranceEnabled;
+  private Boolean isInsuranceEnabled;
 
   @NotNull
   @Schema(description = "Зарплатный клиент", example = "true")
-  private Boolean salaryClient;
+  private Boolean isSalaryClient;
 }

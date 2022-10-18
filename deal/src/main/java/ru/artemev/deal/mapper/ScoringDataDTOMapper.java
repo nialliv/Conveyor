@@ -1,34 +1,37 @@
 package ru.artemev.deal.mapper;
 
 import org.mapstruct.Mapper;
-import ru.artemev.deal.dto.LoanOfferDTO;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import ru.artemev.deal.dto.ScoringDataDTO;
 import ru.artemev.deal.entity.ApplicationEntity;
-import ru.artemev.deal.entity.ClientEntity;
 
-@Mapper
-public abstract class ScoringDataDTOMapper {
-  public static ScoringDataDTO toScoringDataDTO(ApplicationEntity applicationEntity) {
-    LoanOfferDTO loanOfferDTO = applicationEntity.getAppliedOffer();
-    ClientEntity clientEntity = applicationEntity.getClientEntity();
-    return ScoringDataDTO.builder()
-        .amount(loanOfferDTO.getTotalAmount())
-        .term(loanOfferDTO.getTerm())
-        .firstName(clientEntity.getFirstName())
-        .lastName(clientEntity.getLastName())
-        .middleName(clientEntity.getMiddleName())
-        .gender(clientEntity.getGender())
-        .birthday(clientEntity.getBirthday())
-        .passportSeries(clientEntity.getPassport().getSeries())
-        .passportNumber(clientEntity.getPassport().getNumber())
-        .passportIssueBranch(clientEntity.getPassport().getIssueBranch())
-        .passportIssueDate(clientEntity.getPassport().getIssueDate())
-        .maritalStatus(clientEntity.getMaritalStatus())
-        .dependentAmount(clientEntity.getDependentAmount())
-        .employment(clientEntity.getEmployment())
-        .account(clientEntity.getAccount())
-        .insuranceEnabled(loanOfferDTO.isInsuranceEnabled())
-        .salaryClient(loanOfferDTO.isSalaryClient())
-        .build();
-  }
+@Mapper(componentModel = "spring")
+public interface ScoringDataDTOMapper {
+  @Mappings({
+    @Mapping(target = "amount", source = "applicationEntity.appliedOffer.totalAmount"),
+    @Mapping(target = "term", source = "applicationEntity.appliedOffer.term"),
+    @Mapping(target = "firstName", source = "applicationEntity.clientEntity.firstName"),
+    @Mapping(target = "lastName", source = "applicationEntity.clientEntity.lastName"),
+    @Mapping(target = "middleName", source = "applicationEntity.clientEntity.middleName"),
+    @Mapping(target = "gender", source = "applicationEntity.clientEntity.gender"),
+    @Mapping(target = "birthday", source = "applicationEntity.clientEntity.birthday"),
+    @Mapping(target = "passportSeries", source = "applicationEntity.clientEntity.passport.series"),
+    @Mapping(target = "passportNumber", source = "applicationEntity.clientEntity.passport.number"),
+    @Mapping(
+        target = "passportIssueBranch",
+        source = "applicationEntity.clientEntity.passport.issueBranch"),
+    @Mapping(
+        target = "passportIssueDate",
+        source = "applicationEntity.clientEntity.passport.issueDate"),
+    @Mapping(target = "maritalStatus", source = "applicationEntity.clientEntity.maritalStatus"),
+    @Mapping(target = "dependentAmount", source = "applicationEntity.clientEntity.dependentAmount"),
+    @Mapping(target = "employment", source = "applicationEntity.clientEntity.employment"),
+    @Mapping(target = "account", source = "applicationEntity.clientEntity.account"),
+    @Mapping(
+        target = "isInsuranceEnabled",
+        source = "applicationEntity.appliedOffer.insuranceEnabled"),
+    @Mapping(target = "isSalaryClient", source = "applicationEntity.appliedOffer.insuranceEnabled")
+  })
+  ScoringDataDTO toScoringDataDTO(ApplicationEntity applicationEntity);
 }

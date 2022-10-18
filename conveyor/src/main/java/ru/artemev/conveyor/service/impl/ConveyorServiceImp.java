@@ -53,8 +53,8 @@ public class ConveyorServiceImp implements ConveyorService {
     log.info("Started generating CreditDTO");
     if (!validateData(scoringDataDTO)) throw new ValidationException("Ошибка валидации");
     BigDecimal rate = BigDecimal.valueOf(baseRate);
-    rate = getRateByInsurance(scoringDataDTO.getInsuranceEnabled(), rate);
-    rate = getRateBySalary(scoringDataDTO.getSalaryClient(), rate);
+    rate = getRateByInsurance(scoringDataDTO.getIsInsuranceEnabled(), rate);
+    rate = getRateBySalary(scoringDataDTO.getIsSalaryClient(), rate);
     rate = getRateByEmployment(scoringDataDTO.getEmployment(), rate);
     rate = getRateByMaritalStatus(scoringDataDTO.getMaritalStatus(), rate);
     rate = getRateByDependentAmount(scoringDataDTO.getDependentAmount(), rate);
@@ -71,8 +71,8 @@ public class ConveyorServiceImp implements ConveyorService {
             .rate(rate)
             .psk(psk)
             .monthlyPayment(monthlyPayment)
-            .insuranceEnabled(scoringDataDTO.getInsuranceEnabled())
-            .salaryClient(scoringDataDTO.getSalaryClient())
+            .isInsuranceEnabled(scoringDataDTO.getIsInsuranceEnabled())
+            .isSalaryClient(scoringDataDTO.getIsSalaryClient())
             .paymentSchedule(paymentScheduleElements)
             .build();
     log.info("Finished generate CreditDTO");
@@ -105,15 +105,15 @@ public class ConveyorServiceImp implements ConveyorService {
 
   private LoanOfferDTO getCompletedOffers(
       Long applicationId,
-      boolean insuranceEnabled,
-      boolean salaryClient,
+      boolean isInsuranceEnabled,
+      boolean isSalaryClient,
       LoanApplicationRequestDTO loanApplicationRequestDTO) {
     log.info("Complete offer calculation started");
     if (Period.between(loanApplicationRequestDTO.getBirthday(), LocalDate.now()).getYears() <= 18)
       throw new ValidationException("Клиенту нет 18 лет");
     BigDecimal rate = BigDecimal.valueOf(baseRate);
-    rate = getRateByInsurance(insuranceEnabled, rate);
-    rate = getRateBySalary(salaryClient, rate);
+    rate = getRateByInsurance(isInsuranceEnabled, rate);
+    rate = getRateBySalary(isSalaryClient, rate);
     BigDecimal requestedAmount = loanApplicationRequestDTO.getAmount();
     Integer term = loanApplicationRequestDTO.getTerm();
 
@@ -134,8 +134,8 @@ public class ConveyorServiceImp implements ConveyorService {
             .term(term)
             .monthlyPayment(monthlyPayment)
             .rate(rate)
-            .insuranceEnabled(insuranceEnabled)
-            .salaryClient(salaryClient)
+            .isInsuranceEnabled(isInsuranceEnabled)
+            .isSalaryClient(isSalaryClient)
             .build();
     log.info("Offer calculation completed");
     return loanOfferDTO;
@@ -200,8 +200,8 @@ public class ConveyorServiceImp implements ConveyorService {
     return rate;
   }
 
-  private BigDecimal getRateBySalary(Boolean salaryClient, BigDecimal rate) {
-    if (salaryClient) rate = rate.subtract(BigDecimal.valueOf(4));
+  private BigDecimal getRateBySalary(Boolean isSalaryClient, BigDecimal rate) {
+    if (isSalaryClient) rate = rate.subtract(BigDecimal.valueOf(4));
     return rate;
   }
 
@@ -215,8 +215,8 @@ public class ConveyorServiceImp implements ConveyorService {
     return amount.add(creditCoast);
   }
 
-  private BigDecimal getRateByInsurance(Boolean insuranceEnabled, BigDecimal rate) {
-    if (insuranceEnabled) rate = rate.subtract(BigDecimal.valueOf(3));
+  private BigDecimal getRateByInsurance(Boolean isInsuranceEnabled, BigDecimal rate) {
+    if (isInsuranceEnabled) rate = rate.subtract(BigDecimal.valueOf(3));
     return rate;
   }
 }

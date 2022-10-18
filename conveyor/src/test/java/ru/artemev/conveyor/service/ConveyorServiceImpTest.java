@@ -1,9 +1,9 @@
 package ru.artemev.conveyor.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.artemev.conveyor.dto.CreditDTO;
 import ru.artemev.conveyor.dto.EmploymentDTO;
@@ -27,9 +27,10 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
+@RequiredArgsConstructor
 class ConveyorServiceImpTest {
 
-  @Autowired ConveyorService conveyorService = new ConveyorServiceImp();
+  private final ConveyorService conveyorService = new ConveyorServiceImp();
 
   @Test
   void getOffers() {
@@ -50,8 +51,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9583.33))
                 .rate(BigDecimal.valueOf(15))
-                .insuranceEnabled(false)
-                .salaryClient(false)
+                .isInsuranceEnabled(false)
+                .isSalaryClient(false)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(3L)
@@ -60,8 +61,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9333.33))
                 .rate(BigDecimal.valueOf(12))
-                .insuranceEnabled(true)
-                .salaryClient(false)
+                .isInsuranceEnabled(true)
+                .isSalaryClient(false)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(2L)
@@ -70,8 +71,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9253.33))
                 .rate(BigDecimal.valueOf(11))
-                .insuranceEnabled(false)
-                .salaryClient(true)
+                .isInsuranceEnabled(false)
+                .isSalaryClient(true)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(4L)
@@ -80,8 +81,8 @@ class ConveyorServiceImpTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9003.33))
                 .rate(BigDecimal.valueOf(8))
-                .insuranceEnabled(true)
-                .salaryClient(true)
+                .isInsuranceEnabled(true)
+                .isSalaryClient(true)
                 .build());
 
     assertEquals(loanOfferDTOList, loanOfferDTOListTest);
@@ -107,8 +108,8 @@ class ConveyorServiceImpTest {
                 .workExperienceTotal(12)
                 .workExperienceCurrent(3)
                 .build());
-    when(scoringDataDTO.getInsuranceEnabled()).thenReturn(true);
-    when(scoringDataDTO.getSalaryClient()).thenReturn(true);
+    when(scoringDataDTO.getIsInsuranceEnabled()).thenReturn(true);
+    when(scoringDataDTO.getIsSalaryClient()).thenReturn(true);
 
     CreditDTO creditDTO = conveyorService.getCreditDto(scoringDataDTO);
 
@@ -119,8 +120,8 @@ class ConveyorServiceImpTest {
             .monthlyPayment(BigDecimal.valueOf(33663.33))
             .rate(BigDecimal.valueOf(4))
             .psk(BigDecimal.valueOf(100990))
-            .insuranceEnabled(true)
-            .salaryClient(true)
+            .isInsuranceEnabled(true)
+            .isSalaryClient(true)
             .paymentSchedule(
                 List.of(
                     PaymentScheduleElement.builder()
