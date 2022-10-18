@@ -53,11 +53,11 @@ public class CreditEntity {
   @Type(type = "jsonb")
   private List<PaymentScheduleElement> paymentSchedule;
 
-  @Column(name = "insurance_enabled", nullable = false)
-  private Boolean insuranceEnabled;
+  @Column(name = "is_insurance_enabled", nullable = false)
+  private Boolean isInsuranceEnabled;
 
-  @Column(name = "salary_client", nullable = false)
-  private Boolean salaryClient;
+  @Column(name = "is_salary_client", nullable = false)
+  private Boolean isSalaryClient;
 
   @Column(name = "credit_status", nullable = false)
   @Enumerated(EnumType.STRING)
