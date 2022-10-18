@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Validated
-@FeignClient(name = "conveyor-client", url = "${conveyor.client.url}")
+@FeignClient(name = "conveyor-client", url = "localhost:8080/api")
 public interface ConveyorClient {
   @PostMapping("/conveyor/offers")
   List<LoanOfferDTO> getOffers(
