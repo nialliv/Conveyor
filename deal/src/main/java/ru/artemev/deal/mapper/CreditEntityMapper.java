@@ -1,23 +1,18 @@
 package ru.artemev.deal.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import ru.artemev.deal.dto.CreditDTO;
 import ru.artemev.deal.entity.CreditEntity;
-import ru.artemev.deal.model.enums.CreditStatus;
 
-@Mapper
-public abstract class CreditEntityMapper {
-  public static CreditEntity toClientEntity(CreditDTO creditDTO) {
-    return CreditEntity.builder()
-        .amount(creditDTO.getAmount())
-            .term(creditDTO.getTerm())
-        .monthlyPayment(creditDTO.getMonthlyPayment())
-        .rate(creditDTO.getRate())
-        .psk(creditDTO.getPsk())
-        .paymentSchedule(creditDTO.getPaymentSchedule())
-        .insuranceEnabled(creditDTO.getInsuranceEnabled())
-        .salaryClient(creditDTO.getSalaryClient())
-        .creditStatus(CreditStatus.CALCULATED)
-        .build();
-  }
+@Mapper(componentModel = "spring")
+public interface CreditEntityMapper {
+
+  @Mappings({
+    @Mapping(target = "id", ignore = true),
+    @Mapping(target = "creditStatus", ignore = true),
+    @Mapping(target = "applicationEntity", ignore = true)
+  })
+  CreditEntity toCreditEntity(CreditDTO creditDTO);
 }
