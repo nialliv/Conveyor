@@ -1,5 +1,7 @@
 package ru.artemev.conveyor.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -11,29 +13,38 @@ import java.util.List;
 @Data
 @Builder
 @Schema(description = "Кредит")
+@JsonDeserialize(builder = CreditDTO.CreditDTOBuilder.class)
 public class CreditDTO {
 
   @Schema(description = "Сумма", example = "10000")
-  private final BigDecimal amount;
+  @JsonProperty("amount")
+  private BigDecimal amount;
 
   @Schema(description = "Срок займа", example = "6")
-  private final Integer term;
+  @JsonProperty("term")
+  private Integer term;
 
   @Schema(description = "Ежемесячный платеж", example = "1500")
-  private final BigDecimal monthlyPayment;
+  @JsonProperty("monthlyPayment")
+  private BigDecimal monthlyPayment;
 
   @Schema(description = "Процент кредита", example = "15")
-  private final BigDecimal rate;
+  @JsonProperty("rate")
+  private BigDecimal rate;
 
   @Schema(description = "Полная стоимость кредита", example = "15")
-  private final BigDecimal psk;
+  @JsonProperty("psk")
+  private BigDecimal psk;
 
   @Schema(description = "Страховка", example = "true")
-  private final Boolean isInsuranceEnabled;
+  @JsonProperty("isInsuranceEnabled")
+  private Boolean isInsuranceEnabled;
 
   @Schema(description = "Зарплатный клиент", example = "true")
-  private final Boolean isSalaryClient;
+  @JsonProperty("isSalaryClient")
+  private Boolean isSalaryClient;
 
   @Schema(description = "График платежей")
-  private final List<PaymentScheduleElement> paymentSchedule;
+  @JsonProperty("paymentSchedule")
+  private List<PaymentScheduleElement> paymentSchedule;
 }

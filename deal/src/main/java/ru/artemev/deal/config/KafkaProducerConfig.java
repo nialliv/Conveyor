@@ -32,11 +32,11 @@ public class KafkaProducerConfig {
 
   @Bean
   public ProducerFactory<Long, EmailMessage> producerFactory() {
-      return new DefaultKafkaProducerFactory<>(producerConfig());
+    return new DefaultKafkaProducerFactory<>(producerConfig());
   }
 
   @Bean
   public KafkaTemplate<Long, EmailMessage> kafkaTemplate() {
-      return new KafkaTemplate<>(producerFactory());
+    return new KafkaTemplate<>(producerFactory());
   }
 }

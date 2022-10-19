@@ -1,7 +1,7 @@
 package ru.artemev.application.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artemev.application.client.DealClient;
 import ru.artemev.application.dto.LoanApplicationRequestDTO;
@@ -15,9 +15,10 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
 
-  @Autowired private DealClient dealClient;
+  private final DealClient dealClient;
 
   @Override
   public List<LoanOfferDTO> getLoanOfferDtoList(

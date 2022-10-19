@@ -2,9 +2,8 @@ package ru.artemev.deal.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.artemev.deal.client.ConveyorClient;
@@ -26,7 +25,6 @@ import ru.artemev.deal.model.ApplicationHistory;
 import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.model.enums.CreditStatus;
-import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.model.enums.Theme;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
@@ -35,6 +33,7 @@ import ru.artemev.deal.service.DealService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
@@ -138,10 +137,12 @@ public class DealServiceImpl implements DealService {
     applicationRepository.save(applicationEntity);
 
     kafkaTemplate.send(
-            "conveyor-finish-registration",
-            applicationEntity.getId(),
-            new EmailMessage(
-                    applicationEntity.getClientEntity().getEmail(), Theme.FINISH_REGISTRATION, applicationEntity.getId()));
+        "conveyor-finish-registration",
+        applicationEntity.getId(),
+        new EmailMessage(
+            applicationEntity.getClientEntity().getEmail(),
+            Theme.FINISH_REGISTRATION,
+            applicationEntity.getId()));
 
     log.info("======Finished selectOneOfOffers=======");
   }
@@ -227,10 +228,12 @@ public class DealServiceImpl implements DealService {
     log.info("Saved applicationEntity");
 
     kafkaTemplate.send(
-            "conveyor-create-documents",
-            applicationEntity.getId(),
-            new EmailMessage(
-                    applicationEntity.getClientEntity().getEmail(), Theme.CREATE_DOCUMENTS, applicationEntity.getId()));
+        "conveyor-create-documents",
+        applicationEntity.getId(),
+        new EmailMessage(
+            applicationEntity.getClientEntity().getEmail(),
+            Theme.CREATE_DOCUMENTS,
+            applicationEntity.getId()));
 
     log.info("====== Finished completionOfRegistration =======");
   }
@@ -245,7 +248,11 @@ public class DealServiceImpl implements DealService {
             + applicationStatus);
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     applicationEntity.setApplicationStatus(applicationStatus);
     List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
     applicationHistoryList.add(
@@ -263,7 +270,11 @@ public class DealServiceImpl implements DealService {
 
     updateApplicationStatus(applicationId, ApplicationStatus.PREPARE_DOCUMENTS);
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     kafkaTemplate.send(
         "conveyor-send-documents",
         applicationId,
@@ -281,7 +292,11 @@ public class DealServiceImpl implements DealService {
     log.info("Generated sesCode -> " + sesCode);
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     applicationEntity.setSesCode(String.valueOf(sesCode));
     applicationRepository.save(applicationEntity);
 
@@ -299,7 +314,11 @@ public class DealServiceImpl implements DealService {
     log.info("====== Started codeDocuments =======");
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     CreditEntity creditEntity = applicationEntity.getCreditEntity();
 
     applicationEntity.setApplicationStatus(ApplicationStatus.DOCUMENT_SIGNED);
