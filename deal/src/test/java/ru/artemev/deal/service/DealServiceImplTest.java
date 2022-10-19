@@ -1,91 +1,74 @@
 package ru.artemev.deal.service;
 
-import lombok.RequiredArgsConstructor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
-import ru.artemev.deal.dto.EmploymentDTO;
 import ru.artemev.deal.dto.FinishRegistrationRequestDTO;
 import ru.artemev.deal.dto.LoanApplicationRequestDTO;
 import ru.artemev.deal.dto.LoanOfferDTO;
 import ru.artemev.deal.entity.ApplicationEntity;
 import ru.artemev.deal.entity.ClientEntity;
 import ru.artemev.deal.entity.CreditEntity;
-import ru.artemev.deal.mapper.ApplicationEntityMapper;
 import ru.artemev.deal.mapper.ClientEntityMapper;
 import ru.artemev.deal.mapper.CreditEntityMapper;
 import ru.artemev.deal.model.ApplicationHistory;
 import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.model.enums.CreditStatus;
-import ru.artemev.deal.model.enums.EmploymentStatus;
-import ru.artemev.deal.model.enums.Gender;
-import ru.artemev.deal.model.enums.MaritalStatus;
-import ru.artemev.deal.model.enums.Position;
 import ru.artemev.deal.model.enums.Theme;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
 
-import java.math.BigDecimal;
+import java.io.File;
+import java.io.IOException;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
-@RequiredArgsConstructor
 class DealServiceImplTest {
 
-  private final DealService dealService;
+  private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+  private final LoanApplicationRequestDTO loanApplicationRequestDTO =
+      mapper.readValue(
+          new File("src/test/resources/json/LoanApplicationRequestDTO.json"),
+          LoanApplicationRequestDTO.class);
+  @Autowired private DealService dealService;
+  @Autowired private ClientRepository clientRepository;
+  @Autowired private ApplicationRepository applicationRepository;
+  @Autowired private CreditRepository creditRepository;
+  @Autowired private ClientEntityMapper clientEntityMapper;
+  @Autowired private CreditEntityMapper creditEntityMapper;
+  @MockBean private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
 
-  private final ClientRepository clientRepository;
-
-  private final ApplicationRepository applicationRepository;
-
-  private final ApplicationEntityMapper applicationEntityMapper;
-
-  private final CreditRepository creditRepository;
-
-  private final ClientEntityMapper clientEntityMapper;
-
-  private final CreditEntityMapper creditEntityMapper;
-
-  @MockBean
-  private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
+  DealServiceImplTest() throws IOException {}
 
   @Test
-  void calculationPossibleLoans() {
-    LoanApplicationRequestDTO loanApplicationRequestDTO =
-        LoanApplicationRequestDTO.builder()
-            .firstName("Петя")
-            .lastName("Петров")
-            .middleName("Петрович")
-            .term(12)
-            .amount(BigDecimal.valueOf(100_000))
-            .email("example@test.ru")
-            .birthday(LocalDate.of(2000, 1, 1))
-            .passportSeries("1234")
-            .passportNumber("123456")
-            .build();
+  @DisplayName("Testing calculationPossibleLoans")
+  void calculationPossibleLoans() throws IOException {
 
     ClientEntity clientEntity = clientEntityMapper.toClientEntity(loanApplicationRequestDTO);
-    ApplicationEntity applicationEntity = applicationEntityMapper.toApplicationEntity(clientEntity);
-
-    clientEntity.setId(1L);
-    applicationEntity.setId(1L);
+    ApplicationEntity applicationEntity =
+        ApplicationEntity.builder()
+            .clientEntity(clientEntity)
+            .creationDate(LocalDate.now())
+            .build();
 
     assertEquals(loanApplicationRequestDTO.getFirstName(), clientEntity.getFirstName());
     assertEquals(loanApplicationRequestDTO.getLastName(), clientEntity.getLastName());
@@ -104,66 +87,23 @@ class DealServiceImplTest {
     assertNotNull(applicationRepository.findById(applicationEntity.getId()));
 
     List<LoanOfferDTO> loanOfferDTOList =
-        List.of(
-            LoanOfferDTO.builder()
-                .applicationId(3L)
-                .requestedAmount(BigDecimal.valueOf(100000))
-                .totalAmount(BigDecimal.valueOf(115000))
-                .term(12)
-                .monthlyPayment(BigDecimal.valueOf(9583.33))
-                .rate(BigDecimal.valueOf(15))
-                .isInsuranceEnabled(false)
-                .isSalaryClient(false)
-                .build(),
-            LoanOfferDTO.builder()
-                .applicationId(3L)
-                .requestedAmount(BigDecimal.valueOf(100000))
-                .totalAmount(BigDecimal.valueOf(112000))
-                .term(12)
-                .monthlyPayment(BigDecimal.valueOf(9333.33))
-                .rate(BigDecimal.valueOf(12))
-                .isInsuranceEnabled(true)
-                .isSalaryClient(false)
-                .build(),
-            LoanOfferDTO.builder()
-                .applicationId(3L)
-                .requestedAmount(BigDecimal.valueOf(100000))
-                .totalAmount(BigDecimal.valueOf(111040))
-                .term(12)
-                .monthlyPayment(BigDecimal.valueOf(9253.33))
-                .rate(BigDecimal.valueOf(11))
-                .isInsuranceEnabled(false)
-                .isSalaryClient(true)
-                .build(),
-            LoanOfferDTO.builder()
-                .applicationId(3L)
-                .requestedAmount(BigDecimal.valueOf(100000))
-                .totalAmount(BigDecimal.valueOf(108040))
-                .term(12)
-                .monthlyPayment(BigDecimal.valueOf(9003.33))
-                .rate(BigDecimal.valueOf(8))
-                .isInsuranceEnabled(true)
-                .isSalaryClient(true)
-                .build());
+        Arrays.asList(
+            mapper.readValue(
+                new File("src/test/resources/json/LoanOfferDTOList.json"), LoanOfferDTO[].class));
 
-    assertEquals(loanOfferDTOList, dealService.calculationPossibleLoans(loanApplicationRequestDTO));
+    loanOfferDTOList.forEach(
+        el -> el.setTotalAmount(el.getTotalAmount().setScale(2, RoundingMode.HALF_EVEN)));
+
+    assertEquals(
+        loanOfferDTOList,
+        dealService.calculationPossibleLoans(loanApplicationRequestDTO).stream()
+            .peek(el -> el.setApplicationId(1L))
+            .collect(Collectors.toList()));
   }
 
   @Test
+  @DisplayName("Testing selectOneOfOffers")
   void selectOneOfOffers() {
-
-    LoanApplicationRequestDTO loanApplicationRequestDTO =
-        LoanApplicationRequestDTO.builder()
-            .firstName("Петя")
-            .lastName("Петров")
-            .middleName("Петрович")
-            .term(12)
-            .amount(BigDecimal.valueOf(100_000))
-            .email("example@test.ru")
-            .birthday(LocalDate.of(2000, 1, 1))
-            .passportSeries("1234")
-            .passportNumber("123456")
-            .build();
 
     List<LoanOfferDTO> loanOfferDTOList =
         dealService.calculationPossibleLoans(loanApplicationRequestDTO);
@@ -178,48 +118,31 @@ class DealServiceImplTest {
     assertNotNull(applicationEntity);
 
     List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
+
+    // fix scale error
+    LoanOfferDTO appliedOffer = applicationEntity.getAppliedOffer();
+    appliedOffer.setTotalAmount(appliedOffer.getTotalAmount().setScale(2, RoundingMode.HALF_EVEN));
+
     assertNotNull(applicationHistoryList);
     assertEquals(applicationHistoryList.get(0).getStatus(), ApplicationStatus.PREAPPROVAL);
     assertEquals(applicationHistoryList.get(0).getDate(), LocalDate.now());
     assertEquals(applicationEntity.getApplicationStatus(), ApplicationStatus.PREAPPROVAL);
-    assertEquals(applicationEntity.getAppliedOffer(), loanOfferDTOList.get(0));
-    verify(kafkaTemplate, VerificationModeFactory.times(1)).send("conveyor-create-documents", 2L, new EmailMessage("example@test.ru", Theme.CREATE_DOCUMENTS, 2L));
-
+    assertEquals(appliedOffer, loanOfferDTOList.get(0));
+    verify(kafkaTemplate, VerificationModeFactory.times(1))
+        .send(
+            "conveyor-finish-registration",
+            1L,
+            new EmailMessage("test@example.com", Theme.FINISH_REGISTRATION, 1L));
   }
 
   @Test
-  void completionOfRegistration() {
-    LoanApplicationRequestDTO loanApplicationRequestDTO =
-        LoanApplicationRequestDTO.builder()
-            .firstName("Петя")
-            .lastName("Петров")
-            .middleName("Петрович")
-            .term(12)
-            .amount(BigDecimal.valueOf(100_000))
-            .email("example@test.ru")
-            .birthday(LocalDate.of(2000, 1, 1))
-            .passportSeries("1234")
-            .passportNumber("123456")
-            .build();
+  @DisplayName("Testing completionOfRegistration")
+  void completionOfRegistration() throws IOException {
 
     FinishRegistrationRequestDTO finishRegistrationRequestDTO =
-        FinishRegistrationRequestDTO.builder()
-            .gender(Gender.MALE)
-            .maritalStatus(MaritalStatus.SINGLE)
-            .dependentAmount(1)
-            .passportIssueDate(LocalDate.of(2000, 1, 1))
-            .passportIssueBranch("Moscow")
-            .employment(
-                EmploymentDTO.builder()
-                    .salary(BigDecimal.valueOf(15000))
-                    .position(Position.MID_MANAGER)
-                    .workExperienceTotal(12)
-                    .workExperienceCurrent(3)
-                    .employerINN("123456")
-                    .employmentStatus(EmploymentStatus.SELF_EMPLOYED)
-                    .build())
-            .account("testAccount")
-            .build();
+        mapper.readValue(
+            new File("src/test/resources/json/FinishRegistrationRequestDTO.json"),
+            FinishRegistrationRequestDTO.class);
 
     LoanOfferDTO loanOfferDTO =
         dealService.calculationPossibleLoans(loanApplicationRequestDTO).get(0);
@@ -238,6 +161,10 @@ class DealServiceImplTest {
     assertEquals(creditEntity.getCreditStatus(), CreditStatus.CALCULATED);
     assertEquals(applicationEntity.getApplicationStatus(), ApplicationStatus.CC_APPROVED);
 
-    verify(kafkaTemplate, VerificationModeFactory.times(1)).send("conveyor-finish-registration", 2L, new EmailMessage("example@test.ru", Theme.FINISH_REGISTRATION, 2L));
+    verify(kafkaTemplate, VerificationModeFactory.times(1))
+        .send(
+            "conveyor-finish-registration",
+            1L,
+            new EmailMessage("test@example.com", Theme.FINISH_REGISTRATION, 1L));
   }
 }

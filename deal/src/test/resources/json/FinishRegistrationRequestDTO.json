@@ -1,0 +1,16 @@
+{
+  "gender": "MALE",
+  "maritalStatus": "SINGLE",
+  "dependentAmount": 1,
+  "passportIssueDate": "2000-01-01",
+  "passportIssueBranch": "Moscow",
+  "employment": {
+    "salary": 15000,
+    "position": "MID_MANAGER",
+    "workExperienceTotal": 12,
+    "workExperienceCurrent": 3,
+    "employerINN": "123456",
+    "employmentStatus": "SELF_EMPLOYED"
+  },
+  "account": "testAccount"
+}
