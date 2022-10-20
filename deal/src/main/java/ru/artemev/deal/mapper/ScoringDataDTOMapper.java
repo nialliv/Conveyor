@@ -30,8 +30,10 @@ public interface ScoringDataDTOMapper {
     @Mapping(target = "account", source = "applicationEntity.clientEntity.account"),
     @Mapping(
         target = "isInsuranceEnabled",
-        source = "applicationEntity.appliedOffer.insuranceEnabled"),
-    @Mapping(target = "isSalaryClient", source = "applicationEntity.appliedOffer.insuranceEnabled")
+        source = "applicationEntity.appliedOffer.isInsuranceEnabled"),
+    @Mapping(
+        target = "isSalaryClient",
+        source = "applicationEntity.appliedOffer.isInsuranceEnabled")
   })
   ScoringDataDTO toScoringDataDTO(ApplicationEntity applicationEntity);
 }

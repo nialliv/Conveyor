@@ -9,12 +9,12 @@ import ru.artemev.application.dto.LoanOfferDTO;
 
 import java.util.List;
 
-@FeignClient(name = "deal-client", url = "localhost:8081/api/deal")
+@FeignClient(name = "deal-client", url = "${deal.client.url}")
 public interface DealClient {
-  @PostMapping("application")
+  @PostMapping("/deal/application")
   List<LoanOfferDTO> calculationPossibleLoans(
       @RequestBody LoanApplicationRequestDTO loanApplicationRequestDTO);
 
-  @PutMapping("offer")
+  @PutMapping("/deal/offer")
   void selectOneOfOffers(@RequestBody LoanOfferDTO loanOfferDTO);
 }

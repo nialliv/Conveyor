@@ -1,0 +1,36 @@
+version: '3.7'
+services:
+  postgres:
+    container_name: postgres
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=MYPASS
+
+  kafka:
+    container_name: kafka
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: '''
+      conveyor-finish-registration:1:1,
+      conveyor-create-documents:1:1,
+      conveyor-send-documents:1:1,
+      conveyor-send-ses:1:1,
+      conveyor-credit-issued:1:1,
+      conveyor-application-denied:1:1
+      '''
+
+
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper
+    expose:
+      - 2181
