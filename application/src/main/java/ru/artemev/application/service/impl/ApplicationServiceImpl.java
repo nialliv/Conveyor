@@ -1,7 +1,7 @@
 package ru.artemev.application.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artemev.application.client.DealClient;
 import ru.artemev.application.dto.LoanApplicationRequestDTO;
@@ -12,13 +12,13 @@ import ru.artemev.application.service.ApplicationService;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
 
-  @Autowired private DealClient dealClient;
+  private final DealClient dealClient;
 
   @Override
   public List<LoanOfferDTO> getLoanOfferDtoList(
@@ -33,36 +33,9 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     log.info("Start getLoanOfferDtoList");
     log.info(loanApplicationRequestDTO.toString());
-    if (loanApplicationRequestDTO.getFirstName().length() < 2
-        || loanApplicationRequestDTO.getFirstName().length() > 30)
-      throw new ValidationException("Имя должно быть длинной от 2 до 30 символов");
-
-    if (loanApplicationRequestDTO.getLastName().length() <= 2
-        || loanApplicationRequestDTO.getLastName().length() > 30)
-      throw new ValidationException("Фамилия должно быть длинной от 2 до 30 символов");
-
-    if (loanApplicationRequestDTO.getMiddleName() != null
-        && (loanApplicationRequestDTO.getMiddleName().length() <= 2
-            || loanApplicationRequestDTO.getMiddleName().length() > 30))
-      throw new ValidationException("Отчество должно быть длинной от 2 до 30 символов");
-
-    if (loanApplicationRequestDTO.getAmount().intValue() < 10_000)
-      throw new ValidationException("Сумма кредита меньше 10000");
-
-    if (loanApplicationRequestDTO.getTerm() < 6)
-      throw new ValidationException("Срок займа не может быть меньше 6 месяцев");
 
     if (Period.between(loanApplicationRequestDTO.getBirthday(), LocalDate.now()).getYears() < 18)
       throw new ValidationException("Возраст менее 18");
-
-    if (!Pattern.matches("[\\w.]{2,50}@[\\w.]{2,20}", loanApplicationRequestDTO.getEmail()))
-      throw new ValidationException("Email введен некорректно");
-
-    if (!Pattern.matches("[\\d]{4}", loanApplicationRequestDTO.getPassportSeries()))
-      throw new ValidationException("Серия паспорта введена некорректно");
-
-    if (!Pattern.matches("[\\d]{6}", loanApplicationRequestDTO.getPassportNumber()))
-      throw new ValidationException("Номер паспорта введен некорректно");
 
     List<LoanOfferDTO> listResponseEntity =
         dealClient.calculationPossibleLoans(loanApplicationRequestDTO);

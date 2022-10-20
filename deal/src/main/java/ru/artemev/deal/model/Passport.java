@@ -1,8 +1,10 @@
 package ru.artemev.deal.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -12,6 +14,8 @@ import java.time.LocalDate;
 @Data
 @Schema(description = "Паспорт")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Passport {
 
   @NotNull

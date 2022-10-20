@@ -1,0 +1,107 @@
+{
+  "amount": 10000,
+  "term": 12,
+  "monthlyPayment": 866.33,
+  "rate": 4,
+  "psk": 10396,
+  "isInsuranceEnabled": true,
+  "isSalaryClient": true,
+  "paymentSchedule": [
+    {
+      "number": 1,
+      "date": "2022-11-19",
+      "totalPayment": 866.33,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 9529.67
+    },
+    {
+      "number": 2,
+      "date": "2022-12-19",
+      "totalPayment": 1732.66,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 8663.34
+    },
+    {
+      "number": 3,
+      "date": "2023-01-19",
+      "totalPayment": 2598.99,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 7797.01
+    },
+    {
+      "number": 4,
+      "date": "2023-02-19",
+      "totalPayment": 3465.32,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 6930.68
+    },
+    {
+      "number": 5,
+      "date": "2023-03-19",
+      "totalPayment": 4331.65,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 6064.35
+    },
+    {
+      "number": 6,
+      "date": "2023-04-19",
+      "totalPayment": 5197.98,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 5198.02
+    },
+    {
+      "number": 7,
+      "date": "2023-05-19",
+      "totalPayment": 6064.31,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 4331.69
+    },
+    {
+      "number": 8,
+      "date": "2023-06-19",
+      "totalPayment": 6930.64,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 3465.36
+    },
+    {
+      "number": 9,
+      "date": "2023-07-19",
+      "totalPayment": 7796.97,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 2599.03
+    },
+    {
+      "number": 10,
+      "date": "2023-08-19",
+      "totalPayment": 8663.3,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 1732.7
+    },
+    {
+      "number": 11,
+      "date": "2023-09-19",
+      "totalPayment": 9529.63,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 866.37
+    },
+    {
+      "number": 12,
+      "date": "2023-10-19",
+      "totalPayment": 10395.96,
+      "interestPayment": 33.33,
+      "debtPayment": 833.33,
+      "remainingDebt": 0.04
+    }
+  ]
+}
