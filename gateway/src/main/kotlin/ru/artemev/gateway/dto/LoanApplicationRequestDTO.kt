@@ -20,7 +20,7 @@ data class LoanApplicationRequestDTO(
 
     @Schema(description = "Фамилия", example = "Петров")
     val lastName: @NotBlank String? = null,
-    
+
     @Schema(description = "Отчество", example = "Петрович")
     val middleName: @NotBlank String? = null,
 
