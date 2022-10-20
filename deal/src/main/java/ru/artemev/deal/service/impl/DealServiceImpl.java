@@ -248,7 +248,11 @@ public class DealServiceImpl implements DealService {
             + applicationStatus);
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     applicationEntity.setApplicationStatus(applicationStatus);
     List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
     applicationHistoryList.add(
@@ -266,7 +270,11 @@ public class DealServiceImpl implements DealService {
 
     updateApplicationStatus(applicationId, ApplicationStatus.PREPARE_DOCUMENTS);
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     kafkaTemplate.send(
         "conveyor-send-documents",
         applicationId,
@@ -284,7 +292,11 @@ public class DealServiceImpl implements DealService {
     log.info("Generated sesCode -> " + sesCode);
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     applicationEntity.setSesCode(String.valueOf(sesCode));
     applicationRepository.save(applicationEntity);
 
@@ -302,7 +314,11 @@ public class DealServiceImpl implements DealService {
     log.info("====== Started codeDocuments =======");
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(applicationId).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(applicationId)
+            .orElseThrow(
+                () ->
+                    new NotFoundException(applicationId + " not found in application repository"));
     CreditEntity creditEntity = applicationEntity.getCreditEntity();
 
     applicationEntity.setApplicationStatus(ApplicationStatus.DOCUMENT_SIGNED);

@@ -30,12 +30,12 @@ public class LoanOfferDTO {
   private final BigDecimal rate;
 
   @Schema(description = "Страховка", example = "true")
-  @JsonProperty("insuranceEnabled")
-  private final boolean insuranceEnabled;
+  @JsonProperty("isInsuranceEnabled")
+  private final Boolean isInsuranceEnabled;
 
   @Schema(description = "Зарплатный клиент", example = "true")
-  @JsonProperty("salaryClient")
-  private final boolean salaryClient;
+  @JsonProperty("isSalaryClient")
+  private final Boolean isSalaryClient;
 
   @Schema(description = "Номер предложения", example = "4")
   @JsonProperty("applicationId")

@@ -2,8 +2,8 @@ package ru.artemev.dossier.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.artemev.dossier.client.DealClient;
@@ -14,13 +14,14 @@ import ru.artemev.dossier.service.EmailService;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DossierServiceImpl implements DossierService {
 
-  @Autowired private DealClient dealClient;
+  private final DealClient dealClient;
 
-  @Autowired private EmailService emailService;
+  private final EmailService emailService;
 
-  private ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   @Override
   @KafkaListener(topics = {"conveyor-finish-registration"})

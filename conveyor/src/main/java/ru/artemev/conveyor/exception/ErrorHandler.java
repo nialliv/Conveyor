@@ -16,9 +16,9 @@ public class ErrorHandler {
   }
 
   @ExceptionHandler(value = {Exception.class})
-  public ResponseEntity<ApiError> defaultHandlerException(Exception e) {
-    ApiError apiError = new ApiError(e.getClass().getName(), e.getMessage());
-    e.printStackTrace();
+  public ResponseEntity<ApiError> defaultHandlerException(Exception ex) {
+    ApiError apiError = new ApiError(ex.getClass().getName(), ex.getMessage());
+    ex.printStackTrace();
     return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }
 }

@@ -89,9 +89,9 @@ public class ScoringDataDTO {
 
   @NotNull
   @Schema(description = "Страховка", example = "true")
-  private Boolean insuranceEnabled;
+  private Boolean isInsuranceEnabled;
 
   @NotNull
   @Schema(description = "Зарплатный клиент", example = "true")
-  private Boolean salaryClient;
+  private Boolean isSalaryClient;
 }
