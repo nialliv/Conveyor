@@ -11,20 +11,20 @@ import ru.artemev.dossier.service.EmailService;
 @Slf4j
 public class EmailServiceImpl implements EmailService {
 
-    @Autowired private JavaMailSender javaMailSender;
+  @Autowired private JavaMailSender javaMailSender;
 
-    @Override
-    public void sendSimpleMessage(String address, String subject, String message) {
-        log.info("====== Started sendSimpleMessage =======");
+  @Override
+  public void sendSimpleMessage(String address, String subject, String message) {
+    log.info("====== Started sendSimpleMessage =======");
 
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+    SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 
-        simpleMailMessage.setTo(address);
-        simpleMailMessage.setSubject(subject);
-        simpleMailMessage.setText(message);
+    simpleMailMessage.setTo(address);
+    simpleMailMessage.setSubject(subject);
+    simpleMailMessage.setText(message);
 
-        javaMailSender.send(simpleMailMessage);
+    javaMailSender.send(simpleMailMessage);
 
-        log.info("====== Finished sendSimpleMessage =======");
-    }
+    log.info("====== Finished sendSimpleMessage =======");
+  }
 }

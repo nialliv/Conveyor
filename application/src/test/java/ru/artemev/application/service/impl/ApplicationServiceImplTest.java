@@ -30,6 +30,11 @@ class ApplicationServiceImplTest {
 
   @Autowired private ApplicationService applicationService;
   @Autowired private ApplicationController applicationController;
+  private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+  private final LoanApplicationRequestDTO loanApplicationRequestDTO =
+      mapper.readValue(
+          new File("src/test/resources/json/LoanApplicationRequestDTO.json"),
+          LoanApplicationRequestDTO.class);
 
   ApplicationServiceImplTest() throws IOException {}
 
@@ -113,11 +118,4 @@ class ApplicationServiceImplTest {
       log.info(e.getApiError() + " -> Received Exception");
     }
   }
-
-  private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
-  private final LoanApplicationRequestDTO loanApplicationRequestDTO =
-      mapper.readValue(
-          new File("src/test/resources/json/LoanApplicationRequestDTO.json"),
-          LoanApplicationRequestDTO.class);
 }

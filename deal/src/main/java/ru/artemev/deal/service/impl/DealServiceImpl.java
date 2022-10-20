@@ -2,9 +2,8 @@ package ru.artemev.deal.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.artemev.deal.client.ConveyorClient;
@@ -27,7 +26,6 @@ import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.model.enums.Theme;
-import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
@@ -139,10 +137,12 @@ public class DealServiceImpl implements DealService {
     applicationRepository.save(applicationEntity);
 
     kafkaTemplate.send(
-            "conveyor-finish-registration",
-            applicationEntity.getId(),
-            new EmailMessage(
-                    applicationEntity.getClientEntity().getEmail(), Theme.FINISH_REGISTRATION, applicationEntity.getId()));
+        "conveyor-finish-registration",
+        applicationEntity.getId(),
+        new EmailMessage(
+            applicationEntity.getClientEntity().getEmail(),
+            Theme.FINISH_REGISTRATION,
+            applicationEntity.getId()));
 
     log.info("======Finished selectOneOfOffers=======");
   }
@@ -228,10 +228,12 @@ public class DealServiceImpl implements DealService {
     log.info("Saved applicationEntity");
 
     kafkaTemplate.send(
-            "conveyor-create-documents",
-            applicationEntity.getId(),
-            new EmailMessage(
-                    applicationEntity.getClientEntity().getEmail(), Theme.CREATE_DOCUMENTS, applicationEntity.getId()));
+        "conveyor-create-documents",
+        applicationEntity.getId(),
+        new EmailMessage(
+            applicationEntity.getClientEntity().getEmail(),
+            Theme.CREATE_DOCUMENTS,
+            applicationEntity.getId()));
 
     log.info("====== Finished completionOfRegistration =======");
   }

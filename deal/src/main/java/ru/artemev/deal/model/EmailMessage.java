@@ -10,12 +10,12 @@ import ru.artemev.deal.model.enums.Theme;
 @Schema(description = "Email сообщение")
 public class EmailMessage {
 
-    @Schema(description = "Адрес получателя")
-    private String address;
+  @Schema(description = "Адрес получателя")
+  private String address;
 
-    @Schema(description = "Тема письма")
-    private Theme theme;
+  @Schema(description = "Тема письма")
+  private Theme theme;
 
-    @Schema(description = "Номер заявки")
-    private Long applicationId;
+  @Schema(description = "Номер заявки")
+  private Long applicationId;
 }

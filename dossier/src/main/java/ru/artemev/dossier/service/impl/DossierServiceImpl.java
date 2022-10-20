@@ -31,7 +31,10 @@ public class DossierServiceImpl implements DossierService {
     EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
     log.info("Mapping result => " + emailMessageEntity.toString());
 
-    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Finish registration");
+    emailService.sendSimpleMessage(
+        emailMessageEntity.getAddress(),
+        emailMessageEntity.getTheme().toString(),
+        "Finish registration");
 
     log.info("====== Finished finishRegistration =======");
   }
@@ -45,7 +48,10 @@ public class DossierServiceImpl implements DossierService {
     EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
     log.info("Mapping result => " + emailMessageEntity.toString());
 
-    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Create document");
+    emailService.sendSimpleMessage(
+        emailMessageEntity.getAddress(),
+        emailMessageEntity.getTheme().toString(),
+        "Create document");
 
     log.info("====== Finished createDocuments =======");
   }
@@ -62,7 +68,10 @@ public class DossierServiceImpl implements DossierService {
     dealClient.updateStatus(
         emailMessageEntity.getApplicationId(), ApplicationStatus.DOCUMENT_CREATED);
 
-    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Your loan documents");
+    emailService.sendSimpleMessage(
+        emailMessageEntity.getAddress(),
+        emailMessageEntity.getTheme().toString(),
+        "Your loan documents");
 
     log.info("====== Finished sendDocuments =======");
   }
@@ -75,7 +84,10 @@ public class DossierServiceImpl implements DossierService {
     EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
     log.info("Mapping result => " + emailMessageEntity.toString());
 
-    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Sign documents with SES code");
+    emailService.sendSimpleMessage(
+        emailMessageEntity.getAddress(),
+        emailMessageEntity.getTheme().toString(),
+        "Sign documents with SES code");
 
     log.info("====== Finished signDocuments =======");
   }
@@ -88,10 +100,9 @@ public class DossierServiceImpl implements DossierService {
     EmailMessage emailMessageEntity = objectMapper.readValue(message, EmailMessage.class);
     log.info("Mapping result => " + emailMessageEntity.toString());
 
-    emailService.sendSimpleMessage(emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Credit issued");
+    emailService.sendSimpleMessage(
+        emailMessageEntity.getAddress(), emailMessageEntity.getTheme().toString(), "Credit issued");
 
     log.info("====== Finished codeDocuments =======");
   }
-
-
 }

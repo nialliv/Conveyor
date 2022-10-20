@@ -6,8 +6,8 @@
     "term": 6,
     "monthlyPayment": 1791.67,
     "rate": 15,
-    "insuranceEnabled": "false",
-    "salaryClient":"false"
+    "isInsuranceEnabled": "false",
+    "isSalaryClient": "false"
   },
   {
     "applicationId": 1,
@@ -16,8 +16,8 @@
     "term": 6,
     "monthlyPayment": 1766.67,
     "rate": 12,
-    "insuranceEnabled": "true",
-    "salaryClient":"false"
+    "isInsuranceEnabled": "true",
+    "isSalaryClient": "false"
   },
   {
     "applicationId": 1,
@@ -26,8 +26,8 @@
     "term": 6,
     "monthlyPayment": 1758.67,
     "rate": 11,
-    "insuranceEnabled": "false",
-    "salaryClient":"true"
+    "isInsuranceEnabled": "false",
+    "isSalaryClient": "true"
   },
   {
     "applicationId": 1,
@@ -36,7 +36,7 @@
     "term": 6,
     "monthlyPayment": 1733.67,
     "rate": 8,
-    "insuranceEnabled": "true",
-    "salaryClient":"true"
+    "isInsuranceEnabled": "true",
+    "isSalaryClient": "true"
   }
 ]
