@@ -56,19 +56,19 @@ public class DealController {
     dealService.updateApplicationStatus(applicationId, applicationStatus);
   }
 
-  @PostMapping("/deal/document/{applicationId}/send")
+  @PutMapping("/deal/document/{applicationId}/send")
   @Operation(summary = "Запрос на отправку документов")
   public void sendDocuments(@PathVariable Long applicationId) {
     dealService.sendDocuments(applicationId);
   }
 
-  @PostMapping("/deal/document/{applicationId}/sign")
+  @PutMapping("/deal/document/{applicationId}/sign")
   @Operation(summary = "Запрос на подписание документов")
   public void signDocuments(@PathVariable Long applicationId) {
     dealService.signDocuments(applicationId);
   }
 
-  @PostMapping("/deal/document/{applicationId}/code")
+  @PutMapping("/deal/document/{applicationId}/code")
   @Operation(summary = "Подписание документов")
   public void codeDocuments(@PathVariable Long applicationId, @RequestBody Integer sesCode) {
     dealService.codeDocuments(applicationId, sesCode);
