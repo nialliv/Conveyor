@@ -1,11 +1,11 @@
 package ru.artemev.deal.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,6 +18,7 @@ import ru.artemev.deal.entity.ClientEntity;
 import ru.artemev.deal.entity.CreditEntity;
 import ru.artemev.deal.mapper.ApplicationEntityMapper;
 import ru.artemev.deal.mapper.ClientEntityMapper;
+import ru.artemev.deal.mapper.CreditEntityMapper;
 import ru.artemev.deal.model.ApplicationHistory;
 import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
@@ -45,15 +46,22 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
+@RequiredArgsConstructor
 class DealServiceImplTest {
 
-  @Autowired private DealService dealService;
+  private final DealService dealService;
 
-  @Autowired private ClientRepository clientRepository;
+  private final ClientRepository clientRepository;
 
-  @Autowired private ApplicationRepository applicationRepository;
+  private final ApplicationRepository applicationRepository;
 
-  @Autowired private CreditRepository creditRepository;
+  private final ApplicationEntityMapper applicationEntityMapper;
+
+  private final CreditRepository creditRepository;
+
+  private final ClientEntityMapper clientEntityMapper;
+
+  private final CreditEntityMapper creditEntityMapper;
 
   @MockBean
   private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
@@ -73,8 +81,8 @@ class DealServiceImplTest {
             .passportNumber("123456")
             .build();
 
-    ClientEntity clientEntity = ClientEntityMapper.toClientEntity(loanApplicationRequestDTO);
-    ApplicationEntity applicationEntity = ApplicationEntityMapper.toApplicationEntity(clientEntity);
+    ClientEntity clientEntity = clientEntityMapper.toClientEntity(loanApplicationRequestDTO);
+    ApplicationEntity applicationEntity = applicationEntityMapper.toApplicationEntity(clientEntity);
 
     clientEntity.setId(1L);
     applicationEntity.setId(1L);
@@ -104,8 +112,8 @@ class DealServiceImplTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9583.33))
                 .rate(BigDecimal.valueOf(15))
-                .insuranceEnabled(false)
-                .salaryClient(false)
+                .isInsuranceEnabled(false)
+                .isSalaryClient(false)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(3L)
@@ -114,8 +122,8 @@ class DealServiceImplTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9333.33))
                 .rate(BigDecimal.valueOf(12))
-                .insuranceEnabled(true)
-                .salaryClient(false)
+                .isInsuranceEnabled(true)
+                .isSalaryClient(false)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(3L)
@@ -124,8 +132,8 @@ class DealServiceImplTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9253.33))
                 .rate(BigDecimal.valueOf(11))
-                .insuranceEnabled(false)
-                .salaryClient(true)
+                .isInsuranceEnabled(false)
+                .isSalaryClient(true)
                 .build(),
             LoanOfferDTO.builder()
                 .applicationId(3L)
@@ -134,8 +142,8 @@ class DealServiceImplTest {
                 .term(12)
                 .monthlyPayment(BigDecimal.valueOf(9003.33))
                 .rate(BigDecimal.valueOf(8))
-                .insuranceEnabled(true)
-                .salaryClient(true)
+                .isInsuranceEnabled(true)
+                .isSalaryClient(true)
                 .build());
 
     assertEquals(loanOfferDTOList, dealService.calculationPossibleLoans(loanApplicationRequestDTO));

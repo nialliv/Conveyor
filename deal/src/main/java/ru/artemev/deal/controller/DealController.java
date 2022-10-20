@@ -2,9 +2,8 @@ package ru.artemev.deal.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,45 +18,36 @@ import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.service.DealService;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Сделка")
 @Validated
+@RequiredArgsConstructor
 public class DealController {
 
-  @Autowired private DealService dealService;
+  private final DealService dealService;
 
   @PostMapping("/deal/application")
   @Operation(summary = "Расчёт возможных условий кредита")
   public ResponseEntity<List<LoanOfferDTO>> calculationPossibleLoans(
-      @RequestBody @Valid LoanApplicationRequestDTO loanApplicationRequestDTO,
-      BindingResult bindingResult) {
-    if (bindingResult.hasErrors())
-      throw new ValidationException(bindingResult.getModel().toString());
+      @RequestBody @Valid LoanApplicationRequestDTO loanApplicationRequestDTO) {
     return ResponseEntity.ok(dealService.calculationPossibleLoans(loanApplicationRequestDTO));
   }
 
   @PutMapping("/deal/offer")
   @Operation(summary = "Выбор одного из предложений")
-  public void selectOneOfOffers(
-      @RequestBody @Valid LoanOfferDTO loanOfferDTO, BindingResult bindingResult) {
-    if (bindingResult.hasErrors())
-      throw new ValidationException(bindingResult.getModel().toString());
+  public void selectOneOfOffers(@RequestBody @Valid LoanOfferDTO loanOfferDTO) {
     dealService.selectOneOfOffers(loanOfferDTO);
   }
 
-  @PutMapping("/deal/calculate/{applicationId}")
+  @PutMapping("/deal/calculate/{id}")
   @Operation(summary = "Завершение регистрации + полный подсчёт кредита")
   public void completionOfRegistration(
-      @PathVariable Long applicationId,
-      @RequestBody @Valid FinishRegistrationRequestDTO finishRegistrationRequestDTO,
-      BindingResult bindingResult) {
-    if (bindingResult.hasErrors())
-      throw new ValidationException(bindingResult.getModel().toString());
-    dealService.completionOfRegistration(applicationId, finishRegistrationRequestDTO);
+      @PathVariable Long id,
+      @RequestBody @Valid FinishRegistrationRequestDTO finishRegistrationRequestDTO) {
+    dealService.completionOfRegistration(id, finishRegistrationRequestDTO);
   }
 
   @PutMapping("/deal/admin/{applicationId}/status")

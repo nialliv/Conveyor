@@ -1,8 +1,10 @@
 package ru.artemev.deal.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.artemev.deal.client.ConveyorClient;
@@ -14,7 +16,9 @@ import ru.artemev.deal.dto.ScoringDataDTO;
 import ru.artemev.deal.entity.ApplicationEntity;
 import ru.artemev.deal.entity.ClientEntity;
 import ru.artemev.deal.entity.CreditEntity;
-import ru.artemev.deal.mapper.ApplicationEntityMapper;
+import ru.artemev.deal.exception.ApiError;
+import ru.artemev.deal.exception.BaseException;
+import ru.artemev.deal.exception.NotFoundException;
 import ru.artemev.deal.mapper.ClientEntityMapper;
 import ru.artemev.deal.mapper.CreditEntityMapper;
 import ru.artemev.deal.mapper.ScoringDataDTOMapper;
@@ -23,6 +27,7 @@ import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
 import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.model.enums.Theme;
+import ru.artemev.deal.model.enums.CreditStatus;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
@@ -34,17 +39,24 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DealServiceImpl implements DealService {
 
-  @Autowired private ApplicationRepository applicationRepository;
+  private final ApplicationRepository applicationRepository;
 
-  @Autowired private CreditRepository creditRepository;
+  private final CreditRepository creditRepository;
 
-  @Autowired private ClientRepository clientRepository;
+  private final ClientRepository clientRepository;
 
-  @Autowired private ConveyorClient conveyorClient;
+  private final ConveyorClient conveyorClient;
 
-  @Autowired private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
+  private final ClientEntityMapper clientEntityMapper;
+
+  private final CreditEntityMapper creditEntityMapper;
+
+  private final ScoringDataDTOMapper scoringDataDTOMapper;
+
+  private final KafkaTemplate<Long, EmailMessage> kafkaTemplate;
 
   @Override
   @Transactional
@@ -61,22 +73,26 @@ public class DealServiceImpl implements DealService {
     log.info("Received request = " + loanApplicationRequestDTO);
 
     ClientEntity clientEntity =
-        clientRepository.save(ClientEntityMapper.toClientEntity(loanApplicationRequestDTO));
+        clientRepository.save(clientEntityMapper.toClientEntity(loanApplicationRequestDTO));
     log.info("Created clientEntity = " + clientEntity);
 
     ApplicationEntity applicationEntity =
-        applicationRepository.save(ApplicationEntityMapper.toApplicationEntity(clientEntity));
+        applicationRepository.save(
+            ApplicationEntity.builder()
+                .clientEntity(clientEntity)
+                .creationDate(LocalDate.now())
+                .build());
     log.info("Created applicationEntity = " + applicationEntity);
 
-    List<LoanOfferDTO> result = conveyorClient.getOffers(loanApplicationRequestDTO);
-    log.info("Received request from conveyor service = " + result);
+    List<LoanOfferDTO> loanOfferDTOList = conveyorClient.getOffers(loanApplicationRequestDTO);
+    log.info("Received request from conveyor service = " + loanOfferDTOList);
 
-    if (result != null) {
-      result.forEach(loanOfferDTO -> loanOfferDTO.setApplicationId(applicationEntity.getId()));
-    }
+    if (loanOfferDTOList != null)
+      loanOfferDTOList.forEach(
+          loanOfferDTO -> loanOfferDTO.setApplicationId(applicationEntity.getId()));
 
     log.info("======Finished calculationPossibleLoans=======");
-    return result;
+    return loanOfferDTOList;
   }
 
   @Override
@@ -94,7 +110,10 @@ public class DealServiceImpl implements DealService {
     ApplicationEntity applicationEntity =
         applicationRepository
             .findById(loanOfferDTO.getApplicationId())
-            .orElseThrow(RuntimeException::new);
+            .orElseThrow(
+                () ->
+                    new NotFoundException(
+                        loanOfferDTO.getApplicationId() + " not found in application repository"));
 
     List<ApplicationHistory> applicationHistory = applicationEntity.getStatusHistory();
     if (applicationHistory == null) {
@@ -144,17 +163,19 @@ public class DealServiceImpl implements DealService {
     log.info("====== Started completionOfRegistration =======");
 
     ApplicationEntity applicationEntity =
-        applicationRepository.findById(id).orElseThrow(RuntimeException::new);
+        applicationRepository
+            .findById(id)
+            .orElseThrow(() -> new NotFoundException(id + " not found in application repository"));
 
     ClientEntity clientEntity = applicationEntity.getClientEntity();
 
     log.info("Received all Entity");
 
-    ClientEntityMapper.fieldClientEntity(clientEntity, finishRegistrationRequestDTO);
+    clientEntityMapper.update(clientEntity, finishRegistrationRequestDTO);
     applicationEntity.setClientEntity(clientEntity);
     log.info("Fielded clientEntity");
 
-    ScoringDataDTO scoringDataDTO = ScoringDataDTOMapper.toScoringDataDTO(applicationEntity);
+    ScoringDataDTO scoringDataDTO = scoringDataDTOMapper.toScoringDataDTO(applicationEntity);
     log.info("Fielded scoringDataDTO = " + scoringDataDTO);
 
     List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
@@ -177,10 +198,15 @@ public class DealServiceImpl implements DealService {
     log.info("creditDTO = " + creditDTO);
 
     if (creditDTO == null) {
-      throw new RuntimeException("CreditDTO received as null");
+      throw new BaseException(
+          HttpStatus.BAD_REQUEST,
+          new ApiError(this.getClass().toString(), "CreditDTO received as null"));
     }
 
-    CreditEntity creditEntity = creditRepository.save(CreditEntityMapper.toClientEntity(creditDTO));
+    CreditEntity creditEntity = creditEntityMapper.toCreditEntity(creditDTO);
+    creditEntity.setCreditStatus(CreditStatus.CALCULATED);
+    creditRepository.save(creditEntity);
+
     applicationEntity.setCreditEntity(creditEntity);
 
     log.info("Saved creditEntity");
