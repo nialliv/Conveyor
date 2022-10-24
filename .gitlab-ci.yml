@@ -1,8 +1,31 @@
 stages:
-  - build
+  - build-application
+  - build-conveyor
+  - build-deal
+  - build-dossier
+  - build-gateway
 
-maven-build:
+build-application:
   image: maven:3-jdk-11
-  stage: build
-  script: " mvn  package -f application/pom.xml -DskipTests"
-  
+  stage: build-application
+  script: "mvn  package -f application/pom.xml -DskipTests"
+
+build-conveyor:
+  image: maven:3-jdk-11
+  stage: build-conveyor
+  script: "mvn  package -f conveyor/pom.xml -DskipTests"
+
+build-deal:
+  image: maven:3-jdk-11
+  stage: build-deal
+  script: "mvn  package -f deal/pom.xml -DskipTests"
+
+build-dossier:
+  image: maven:3-jdk-11
+  stage: build-dossier
+  script: "mvn  package -f dossier/pom.xml -DskipTests"
+
+build-gateway:
+  image: maven:3-jdk-11
+  stage: build-gateway
+  script: "mvn  package -f gateway/pom.xml -DskipTests"
