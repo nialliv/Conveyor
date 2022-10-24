@@ -16,7 +16,7 @@ test-deal:
     SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/postgres
     SPRING_DATASOURCE_USERNAME: postgres
     SPRING_DATASOURCE_PASSWORD: MYPASS
-    SPRING_JPA_HIBERNATE_DDL-AUTO: create
+    SPRING_JPA_HIBERNATE_DDL_AUTO: create
   script:
     - "mvn package -DskipTests -f conveyor/pom.xml"
     - "java -jar conveyor/target/conveyor.jar"
