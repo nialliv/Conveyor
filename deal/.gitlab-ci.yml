@@ -8,7 +8,7 @@ test-deal:
   stage: tests
   services:
     - postgres
-    - conveyor/
+    - conveyor:latest
   variables:
     POSTGRES_DB: postgres
     POSTGRES_USER: postgres
