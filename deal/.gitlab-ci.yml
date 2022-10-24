@@ -3,7 +3,7 @@ build-deal:
   stage: build
   script: "mvn  package -f deal/pom.xml -DskipTests"
 
-test-conveyor:
+deal-conveyor:
   image: maven:3-jdk-11
   stage: tests
   services:
@@ -19,4 +19,4 @@ test-conveyor:
     SPRING_DATASOURCE_USERNAME: postgres
     SPRING_DATASOURCE_PASSWORD: MYPASS
     SPRING_JPA_HIBERNATE_DDL-AUTO: create
-  script: "mvn test -f conveyor/pom.xml"
+  script: "mvn test -f deal/pom.xml"
