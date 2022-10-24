@@ -1,4 +1,4 @@
 build-job:
-  stage: build application
+  stage: build
   script:
     - mvn -f application/pom.xml clean install -DskipTests
