@@ -6,5 +6,9 @@ include:
   - "gateway/.gitlab-ci.yml"
 
 stages:
-  - build
   - tests
+  - build
+
+cache:
+  paths:
+    - target/

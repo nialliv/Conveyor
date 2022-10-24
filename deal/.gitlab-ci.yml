@@ -3,12 +3,12 @@ build-deal:
   stage: build
   script: "mvn  package -f deal/pom.xml -DskipTests"
 
-deal-conveyor:
+test-deal:
   image: maven:3-jdk-11
   stage: tests
   services:
     - postgres
-    - nartemev/conveyor/conveyor:latest
+    - conveyor/
   variables:
     POSTGRES_DB: postgres
     POSTGRES_USER: postgres
