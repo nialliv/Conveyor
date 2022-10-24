@@ -8,15 +8,16 @@ test-deal:
   stage: tests
   services:
     - postgres
-    - conveyor:latest
   variables:
     POSTGRES_DB: postgres
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: MYPASS
-    KAFKA_SERVER: kafka:9092
-    CONVEYOR_CLIENT_URL: conveyor:8080/api
-    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/postgres
+    CONVEYOR_CLIENT_URL: localhost:8080/api
+    SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/postgres
     SPRING_DATASOURCE_USERNAME: postgres
     SPRING_DATASOURCE_PASSWORD: MYPASS
     SPRING_JPA_HIBERNATE_DDL-AUTO: create
-  script: "mvn test -f deal/pom.xml"
+  script:
+    - "mvn package -DskipTests -f conveyor/pom.xml"
+    - "java -jar conveyor/target/conveyor.jar"
+    - "mvn test -f deal/pom.xml"
