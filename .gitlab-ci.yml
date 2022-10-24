@@ -1,4 +1,8 @@
-build-job:
+stages:
+  - build
+
+maven-build:
+  image: maven:3-jdk-8
   stage: build
-  script:
-    - mvn -f application/pom.xml clean install -DskipTests
+  script: "mvn package -f application/pom.xml"
+  
