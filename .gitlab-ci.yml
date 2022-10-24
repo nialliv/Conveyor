@@ -1,32 +1,10 @@
 include:
-  - project: "conveyor/application"
-    file: "application/.gitlab-ci.yml"
+  - "application/.gitlab-ci.yml"
+  - "conveyor/.gitlab-ci.yml"
+  - "deal/.gitlab-ci.yml"
+  - "dossier/.gitlab-ci.yml"
+  - "gateway/.gitlab-ci.yml"
 
 stages:
   - build
   - tests
-
-build-conveyor:
-  image: maven:3-jdk-11
-  stage: build
-  script: "mvn  package -f conveyor/pom.xml -DskipTests"
-
-build-deal:
-  image: maven:3-jdk-11
-  stage: build
-  script: "mvn  package -f deal/pom.xml -DskipTests"
-
-build-dossier:
-  image: maven:3-jdk-11
-  stage: build
-  script: "mvn  package -f dossier/pom.xml -DskipTests"
-
-build-gateway:
-  image: maven:3-jdk-11
-  stage: build
-  script: "mvn  package -f gateway/pom.xml -DskipTests"
-
-test-conveyor:
-  image: maven:3-jdk-11
-  stage: tests
-  script: "mvn test -f conveyor/pom.xml"

@@ -1,0 +1,4 @@
+build-deal:
+  image: maven:3-jdk-11
+  stage: build
+  script: "mvn  package -f deal/pom.xml -DskipTests"

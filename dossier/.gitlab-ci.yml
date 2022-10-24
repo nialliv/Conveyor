@@ -1,0 +1,4 @@
+build-dossier:
+  image: maven:3-jdk-11
+  stage: build
+  script: "mvn  package -f dossier/pom.xml -DskipTests"
