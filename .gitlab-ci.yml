@@ -1,10 +1,10 @@
+include:
+  - project: "conveyor/application"
+    file: "application/.gitlab-ci.yml"
+
 stages:
   - build
-
-build-application:
-  image: maven:3-jdk-11
-  stage: build
-  script: "mvn  package -f application/pom.xml -DskipTests"
+  - tests
 
 build-conveyor:
   image: maven:3-jdk-11
@@ -26,3 +26,7 @@ build-gateway:
   stage: build
   script: "mvn  package -f gateway/pom.xml -DskipTests"
 
+test-conveyor:
+  image: maven:3-jdk-11
+  stage: tests
+  script: "mvn test -f conveyor/pom.xml"
