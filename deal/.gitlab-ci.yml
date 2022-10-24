@@ -8,6 +8,7 @@ test-deal:
   stage: tests
   services:
     - postgres
+    - kafka
   variables:
     POSTGRES_DB: postgres
     POSTGRES_USER: postgres
@@ -17,6 +18,7 @@ test-deal:
     SPRING_DATASOURCE_USERNAME: postgres
     SPRING_DATASOURCE_PASSWORD: MYPASS
     SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    KAFKA_SERVER: localhost:9092
   script:
     - "mvn package -DskipTests -f conveyor/pom.xml"
     - "java -jar conveyor/target/conveyor.jar &"
