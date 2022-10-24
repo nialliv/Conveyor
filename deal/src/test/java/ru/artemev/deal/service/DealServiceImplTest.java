@@ -164,7 +164,7 @@ class DealServiceImplTest {
     verify(kafkaTemplate, VerificationModeFactory.times(1))
         .send(
             "conveyor-finish-registration",
-            1L,
-            new EmailMessage("test@example.com", Theme.FINISH_REGISTRATION, 1L));
+            2L,
+            new EmailMessage("test@example.com", Theme.FINISH_REGISTRATION, 2L));
   }
 }
