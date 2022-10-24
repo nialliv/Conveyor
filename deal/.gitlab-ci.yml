@@ -19,5 +19,5 @@ test-deal:
     SPRING_JPA_HIBERNATE_DDL_AUTO: create
   script:
     - "mvn package -DskipTests -f conveyor/pom.xml"
-    - "java -jar conveyor/target/conveyor.jar"
+    - "java -jar conveyor/target/conveyor.jar &"
     - "mvn test -f deal/pom.xml"
