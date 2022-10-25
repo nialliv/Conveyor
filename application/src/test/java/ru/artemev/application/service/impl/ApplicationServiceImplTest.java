@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.artemev.application.client.DealClient;
 import ru.artemev.application.controller.ApplicationController;
 import ru.artemev.application.dto.LoanApplicationRequestDTO;
 import ru.artemev.application.dto.LoanOfferDTO;
@@ -22,25 +24,35 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
 class ApplicationServiceImplTest {
 
-  @Autowired private ApplicationService applicationService;
-  @Autowired private ApplicationController applicationController;
+  @InjectMocks private ApplicationServiceImpl applicationService;
+  @InjectMocks private ApplicationController applicationController;
+  @Mock private DealClient dealClient;
+  @Mock private ApplicationService applicationServiceMock;
+
   private ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
   private final LoanApplicationRequestDTO loanApplicationRequestDTO =
       mapper.readValue(
           new File("src/test/resources/json/LoanApplicationRequestDTO.json"),
           LoanApplicationRequestDTO.class);
+  private final List<LoanOfferDTO> loanOfferDTOList =
+      Arrays.asList(
+          mapper.readValue(
+              new File("src/test/resources/json/LoanOfferDTOList.json"), LoanOfferDTO[].class));
 
   ApplicationServiceImplTest() throws IOException {}
 
   @Test
   @DisplayName("Testing getLoanOfferDtoList")
   void getLoanOfferDtoList() throws IOException {
+    when(applicationServiceMock.getLoanOfferDtoList(loanApplicationRequestDTO))
+        .thenReturn(loanOfferDTOList);
 
     // Check firstName
     checkValid(
@@ -88,19 +100,17 @@ class ApplicationServiceImplTest {
             new File("src/test/resources/json/LoanApplicationRequestDTOTestPassportNumber.json"),
             LoanApplicationRequestDTO.class));
 
-    List<LoanOfferDTO> loanOfferDTOList =
-        Arrays.asList(
-            mapper.readValue(
-                new File("src/test/resources/json/LoanOfferDTOList.json"), LoanOfferDTO[].class));
     log.info(loanOfferDTOList.toString());
     // Check response
     assertEquals(
-        loanOfferDTOList, applicationService.getLoanOfferDtoList(loanApplicationRequestDTO));
+        loanOfferDTOList, applicationServiceMock.getLoanOfferDtoList(loanApplicationRequestDTO));
   }
 
   @Test
   @DisplayName("Testing selectOneOfOffers")
   void selectOneOfOffers() {
+    when(dealClient.calculationPossibleLoans(loanApplicationRequestDTO))
+        .thenReturn(loanOfferDTOList);
     LoanOfferDTO loanOfferDTO =
         applicationService.getLoanOfferDtoList(loanApplicationRequestDTO).get(0);
 

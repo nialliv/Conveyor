@@ -2,7 +2,6 @@ package ru.artemev.deal.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.hibernate.mapping.Any;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -10,9 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import ru.artemev.deal.client.ConveyorClient;
 import ru.artemev.deal.dto.CreditDTO;
@@ -41,7 +38,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,8 +103,10 @@ class DealServiceImplTest {
   @DisplayName("Testing selectOneOfOffers")
   void selectOneOfOffers() {
     ClientEntity clientEntity = ClientEntity.builder().build();
-    ApplicationEntity applicationEntity = ApplicationEntity.builder().id(1L).clientEntity(clientEntity).build();
-    when(applicationRepository.findById(anyLong())).thenReturn(Optional.ofNullable(applicationEntity));
+    ApplicationEntity applicationEntity =
+        ApplicationEntity.builder().id(1L).clientEntity(clientEntity).build();
+    when(applicationRepository.findById(anyLong()))
+        .thenReturn(Optional.ofNullable(applicationEntity));
     when(clientRepository.findById(anyLong())).thenReturn(Optional.ofNullable(clientEntity));
 
     dealService.selectOneOfOffers(loanOfferDTOList.get(0));
@@ -125,7 +123,8 @@ class DealServiceImplTest {
         .send(
             "conveyor-finish-registration",
             applicationEntity.getId(),
-            new EmailMessage(clientEntity.getEmail(), Theme.FINISH_REGISTRATION, applicationEntity.getId()));
+            new EmailMessage(
+                clientEntity.getEmail(), Theme.FINISH_REGISTRATION, applicationEntity.getId()));
   }
 
   @Test
@@ -145,10 +144,12 @@ class DealServiceImplTest {
             new File("src/test/resources/json/FinishRegistrationRequestDTO.json"),
             FinishRegistrationRequestDTO.class);
 
-    CreditDTO creditDTO = mapper.readValue(new File("src/test/resources/json/CreditDTO.json"), CreditDTO.class);
+    CreditDTO creditDTO =
+        mapper.readValue(new File("src/test/resources/json/CreditDTO.json"), CreditDTO.class);
     CreditEntity creditEntity = applicationEntity.getCreditEntity();
 
-    when(applicationRepository.findById(anyLong())).thenReturn(Optional.ofNullable(applicationEntity));
+    when(applicationRepository.findById(anyLong()))
+        .thenReturn(Optional.ofNullable(applicationEntity));
     when(conveyorClient.getCreditDto(any())).thenReturn(creditDTO);
     when(creditEntityMapper.toCreditEntity(creditDTO)).thenReturn(creditEntity);
 
