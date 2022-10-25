@@ -13,7 +13,7 @@ test-deal:
     POSTGRES_DB: postgres
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: MYPASS
-    CONVEYOR_CLIENT_URL: localhost:8080/api
+    CONVEYOR_CLIENT_URL: localhost:8083/api
     SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/postgres
     SPRING_DATASOURCE_USERNAME: postgres
     SPRING_DATASOURCE_PASSWORD: MYPASS
