@@ -35,6 +35,30 @@ services:
     expose:
       - 2181
 
+  grafana:
+    container_name: grafana
+    build: './grafana'
+    ports:
+      - 3000:3000
+    user: root
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - DATASOURCE_URL=http://prometheus:9090
+
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    user: root
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/container:/prometheus
+
   gateway:
     container_name: gateway
     build: ./gateway
@@ -49,7 +73,6 @@ services:
     environment:
       - APPLICATION_CLIENT_URL=application:8080/api
       - DEAL_CLIENT_URL=deal:8080/api
-
 
   application:
     container_name: application
@@ -87,7 +110,6 @@ services:
     build: ./conveyor
     ports:
       - "8083:8080"
-
 
   dossier:
     container_name: dossier
