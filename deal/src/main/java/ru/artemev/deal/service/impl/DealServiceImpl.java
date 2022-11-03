@@ -1,5 +1,7 @@
 package ru.artemev.deal.service.impl;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -55,6 +57,8 @@ public class DealServiceImpl implements DealService {
   private final ScoringDataDTOMapper scoringDataDTOMapper;
 
   private final KafkaTemplate<Long, EmailMessage> kafkaTemplate;
+
+  private final Counter statusCounter = Metrics.counter("documents_status_total");
 
   @Override
   @Transactional
@@ -134,6 +138,8 @@ public class DealServiceImpl implements DealService {
     applicationEntity.setApplicationStatus(ApplicationStatus.PREAPPROVAL);
     applicationEntity.setAppliedOffer(loanOfferDTO);
 
+    statusCounter.increment();
+
     applicationRepository.save(applicationEntity);
 
     kafkaTemplate.send(
@@ -189,6 +195,8 @@ public class DealServiceImpl implements DealService {
     applicationEntity.setApplicationStatus(ApplicationStatus.PREPARE_DOCUMENTS);
     applicationEntity.setStatusHistory(applicationHistoryList);
 
+    statusCounter.increment();
+
     log.info("Updated applicationStatus = " + applicationEntity.getApplicationStatus());
     log.info("Updated applicationHistoryList = " + applicationHistoryList);
 
@@ -219,6 +227,8 @@ public class DealServiceImpl implements DealService {
 
     applicationEntity.setApplicationStatus(ApplicationStatus.CC_APPROVED);
     applicationEntity.setStatusHistory(applicationHistoryList);
+
+    statusCounter.increment();
 
     log.info("Updated applicationStatus");
 
@@ -259,6 +269,7 @@ public class DealServiceImpl implements DealService {
         ApplicationHistory.builder().date(LocalDate.now()).status(applicationStatus).build());
     applicationEntity.setStatusHistory(applicationHistoryList);
 
+    statusCounter.increment();
     applicationRepository.save(applicationEntity);
 
     log.info("====== Finished updateApplicationStatus =======");
@@ -269,6 +280,7 @@ public class DealServiceImpl implements DealService {
     log.info("====== Started sendDocuments =======");
 
     updateApplicationStatus(applicationId, ApplicationStatus.PREPARE_DOCUMENTS);
+    statusCounter.increment();
     ApplicationEntity applicationEntity =
         applicationRepository
             .findById(applicationId)
@@ -333,6 +345,7 @@ public class DealServiceImpl implements DealService {
 
     creditEntity.setCreditStatus(CreditStatus.ISSUED);
 
+    statusCounter.increment();
     creditRepository.save(creditEntity);
     applicationRepository.save(applicationEntity);
 
