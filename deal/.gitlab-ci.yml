@@ -1,0 +1,23 @@
+build-deal:
+  image: maven:3-jdk-11
+  stage: build
+  script: "mvn  package -f deal/pom.xml -DskipTests"
+
+test-deal:
+  image: maven:3-jdk-11
+  stage: tests
+  services:
+    - postgres
+    - bitnami/kafka
+  variables:
+    POSTGRES_DB: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: MYPASS
+    CONVEYOR_CLIENT_URL: localhost:8083/api
+    SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/postgres
+    SPRING_DATASOURCE_USERNAME: postgres
+    SPRING_DATASOURCE_PASSWORD: MYPASS
+    SPRING_JPA_HIBERNATE_DDL_AUTO: create
+    KAFKA_SERVER: localhost:9092
+  script:
+    - "mvn test -f deal/pom.xml"

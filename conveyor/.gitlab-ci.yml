@@ -1,0 +1,9 @@
+build-conveyor:
+  image: maven:3-jdk-11
+  stage: build
+  script: "mvn  package -f conveyor/pom.xml -DskipTests"
+
+test-conveyor:
+  image: maven:3-jdk-11
+  stage: tests
+  script: "mvn test -f conveyor/pom.xml"

@@ -3,7 +3,6 @@ package ru.artemev.gateway.dto
 import io.swagger.v3.oas.annotations.media.Schema
 import java.math.BigDecimal
 import java.time.LocalDate
-import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Past
 
@@ -16,13 +15,13 @@ data class LoanApplicationRequestDTO(
     val term: @NotNull Int? = null,
 
     @Schema(description = "Имя", example = "Петя")
-    val firstName: @NotBlank String? = null,
+    val firstName: @NotNull String? = null,
 
     @Schema(description = "Фамилия", example = "Петров")
-    val lastName: @NotBlank String? = null,
+    val lastName: @NotNull String? = null,
 
     @Schema(description = "Отчество", example = "Петрович")
-    val middleName: @NotBlank String? = null,
+    val middleName: @NotNull String? = null,
 
     @Schema(description = "Электронная почта", example = "ppetrov@example.com")
     val email: String? = null,

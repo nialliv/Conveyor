@@ -5,12 +5,18 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
+import ru.artemev.gateway.client.ApplicationClient
+import ru.artemev.gateway.client.DealClient
 import ru.artemev.gateway.dto.FinishRegistrationRequestDTO
 import ru.artemev.gateway.dto.LoanApplicationRequestDTO
 import ru.artemev.gateway.dto.LoanOfferDTO
@@ -18,12 +24,19 @@ import java.io.File
 
 @SpringBootTest
 @AutoConfigureMockMvc
-internal class GatewayControllerTest(
+@ExtendWith(SpringExtension::class, MockitoExtension::class)
+internal class GatewayControllerTest {
+
     @Autowired
-    val gatewayController: GatewayController,
-    @Autowired
-    val mockMvc: MockMvc,
-) {
+    private lateinit var mockMvc: MockMvc
+
+    @MockBean
+    lateinit var applicationClient: ApplicationClient
+
+    @MockBean
+    lateinit var dealClient: DealClient
+
+
     private val objectMapper: ObjectMapper = ObjectMapper().registerModule(JavaTimeModule())
 
     private val loanApplicationRequestDTO: LoanApplicationRequestDTO =
@@ -31,6 +44,11 @@ internal class GatewayControllerTest(
 
     private val finishRegistrationRequestDTO: FinishRegistrationRequestDTO =
         objectMapper.readValue(File("src/test/resources/json/FinishRegistrationRequestDTO.json"))
+
+    private val loanOfferDTOList: List<LoanOfferDTO> =
+        objectMapper.readValue(File("src/test/resources/json/LoanOfferDTOList.json"))
+
+    private val applicationId: Long = loanOfferDTOList[0].applicationId!!
 
     @Test
     @DisplayName("Testing getLoanOfferDtoList")
@@ -42,20 +60,15 @@ internal class GatewayControllerTest(
             .andDo { print() }
             .andExpect {
                 status { isOk() }
-                content {
-                    contentType(MediaType.APPLICATION_JSON)
-                }
             }
     }
 
     @Test
     @DisplayName("Testing selectOneOfOffers")
     fun selectOneOfOffers() {
-        val loanOfferDTO: LoanOfferDTO = gatewayController.getLoanOfferDtoList(loanApplicationRequestDTO)[0]
-
         mockMvc.post("/application/apply") {
             contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(loanOfferDTO)
+            content = objectMapper.writeValueAsString(loanOfferDTOList[0])
         }
             .andDo { print() }
             .andExpect {
@@ -66,7 +79,7 @@ internal class GatewayControllerTest(
     @Test
     @DisplayName("Testing completionOfRegistration")
     fun completionOfRegistration() {
-        mockMvc.post("/application/registration/${preparedForGettingApplicationID()}") {
+        mockMvc.post("/application/registration/${applicationId}") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(finishRegistrationRequestDTO)
         }
@@ -80,7 +93,7 @@ internal class GatewayControllerTest(
     @Test
     @DisplayName("Testing sendDocuments")
     fun sendDocuments() {
-        mockMvc.post("/document/${preparedForGettingApplicationID()}")
+        mockMvc.post("/document/${applicationId}")
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -90,9 +103,7 @@ internal class GatewayControllerTest(
     @Test
     @DisplayName("Testing signDocuments")
     fun signDocuments() {
-        // post + document/{applicationId}/sign
-        // @PathVariable applicationId: Long
-        mockMvc.post("/document/${preparedForGettingApplicationID()}/sign")
+        mockMvc.post("/document/${applicationId}/sign")
             .andDo { print() }
             .andExpect {
                 status { isOk() }
@@ -102,7 +113,7 @@ internal class GatewayControllerTest(
     @Test
     @DisplayName("Testing codeDocuments")
     fun codeDocuments() {
-        mockMvc.post("/document/${preparedForGettingApplicationID()}/sign/code") {
+        mockMvc.post("/document/${applicationId}/sign/code") {
             contentType = MediaType.APPLICATION_JSON
             content = 1234
         }
@@ -111,14 +122,5 @@ internal class GatewayControllerTest(
                 status { isOk() }
                 content { }
             }
-    }
-
-
-    private fun preparedForGettingApplicationID(): Long {
-        val loanOfferDto = gatewayController.getLoanOfferDtoList(loanApplicationRequestDTO)[0]
-        val applicationId = loanOfferDto.applicationId
-        gatewayController.selectOneOfOffers(loanOfferDto)
-        gatewayController.completionOfRegistration(applicationId!!, finishRegistrationRequestDTO)
-        return applicationId
     }
 }

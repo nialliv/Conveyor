@@ -1,0 +1,12 @@
+build-application:
+  image: maven:3-jdk-11
+  stage: build
+  script: "mvn  package -f application/pom.xml -DskipTests"
+
+test-application:
+  image: maven:3-jdk-11
+  stage: tests
+  variables:
+    DEAL_CLIENT_URL: localhost:8082/api
+  script:
+    - "mvn test -f application/pom.xml"

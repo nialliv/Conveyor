@@ -1,0 +1,13 @@
+build-gateway:
+  image: maven:3-jdk-11
+  stage: build
+  script: "mvn  package -f gateway/pom.xml -DskipTests"
+
+test-gateway:
+  image: maven:3-jdk-11
+  stage: tests
+  variables:
+    APPLICATION_CLIENT_URL: localhost:8081/api
+    DEAL_CLIENT_URL: localhost:8082/api
+  script:
+    - "mvn test -f gateway/pom.xml"

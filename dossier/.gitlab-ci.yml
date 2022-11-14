@@ -1,0 +1,16 @@
+build-dossier:
+  image: maven:3-jdk-11
+  stage: build
+  script: "mvn  package -f dossier/pom.xml -DskipTests"
+
+test-dossier:
+  image: maven:3-jdk-11
+  stage: tests
+  services:
+    - bitnami/kafka
+  variables:
+    DEAL_CLIENT_URL: localhost:8082/api
+    KAFKA_SERVER: localhost:9092
+    KAFKA_GROUP_ID: dossier.group.id
+  script:
+    - "mvn test -f dossier/pom.xml"

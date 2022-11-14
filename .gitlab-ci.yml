@@ -1,0 +1,14 @@
+include:
+  - "application/.gitlab-ci.yml"
+  - "conveyor/.gitlab-ci.yml"
+  - "deal/.gitlab-ci.yml"
+  - "dossier/.gitlab-ci.yml"
+  - "gateway/.gitlab-ci.yml"
+
+stages:
+  - tests
+  - build
+
+cache:
+  paths:
+    - target/

@@ -5,12 +5,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
+import ru.artemev.deal.client.ConveyorClient;
+import ru.artemev.deal.dto.CreditDTO;
 import ru.artemev.deal.dto.FinishRegistrationRequestDTO;
 import ru.artemev.deal.dto.LoanApplicationRequestDTO;
 import ru.artemev.deal.dto.LoanOfferDTO;
@@ -19,6 +21,7 @@ import ru.artemev.deal.entity.ClientEntity;
 import ru.artemev.deal.entity.CreditEntity;
 import ru.artemev.deal.mapper.ClientEntityMapper;
 import ru.artemev.deal.mapper.CreditEntityMapper;
+import ru.artemev.deal.mapper.ScoringDataDTOMapper;
 import ru.artemev.deal.model.ApplicationHistory;
 import ru.artemev.deal.model.EmailMessage;
 import ru.artemev.deal.model.enums.ApplicationStatus;
@@ -27,18 +30,24 @@ import ru.artemev.deal.model.enums.Theme;
 import ru.artemev.deal.repository.ApplicationRepository;
 import ru.artemev.deal.repository.ClientRepository;
 import ru.artemev.deal.repository.CreditRepository;
+import ru.artemev.deal.service.impl.DealServiceImpl;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
@@ -49,20 +58,25 @@ class DealServiceImplTest {
       mapper.readValue(
           new File("src/test/resources/json/LoanApplicationRequestDTO.json"),
           LoanApplicationRequestDTO.class);
-  @Autowired private DealService dealService;
-  @Autowired private ClientRepository clientRepository;
-  @Autowired private ApplicationRepository applicationRepository;
-  @Autowired private CreditRepository creditRepository;
-  @Autowired private ClientEntityMapper clientEntityMapper;
-  @Autowired private CreditEntityMapper creditEntityMapper;
-  @MockBean private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
+  private final List<LoanOfferDTO> loanOfferDTOList =
+      Arrays.asList(
+          mapper.readValue(
+              new File("src/test/resources/json/LoanOfferDTOList.json"), LoanOfferDTO[].class));
+  @InjectMocks private DealServiceImpl dealService;
+  @Mock private ClientRepository clientRepository;
+  @Mock private ApplicationRepository applicationRepository;
+  @Mock private CreditRepository creditRepository;
+  @Mock private ClientEntityMapper clientEntityMapper;
+  @Mock private CreditEntityMapper creditEntityMapper;
+  @Mock private ScoringDataDTOMapper scoringDataDTOMapper;
+  @Mock private ConveyorClient conveyorClient;
+  @Mock private KafkaTemplate<Long, EmailMessage> kafkaTemplate;
 
   DealServiceImplTest() throws IOException {}
 
   @Test
   @DisplayName("Testing calculationPossibleLoans")
-  void calculationPossibleLoans() throws IOException {
-
+  void calculationPossibleLoans() {
     ClientEntity clientEntity = clientEntityMapper.toClientEntity(loanApplicationRequestDTO);
     ApplicationEntity applicationEntity =
         ApplicationEntity.builder()
@@ -70,29 +84,13 @@ class DealServiceImplTest {
             .creationDate(LocalDate.now())
             .build();
 
-    assertEquals(loanApplicationRequestDTO.getFirstName(), clientEntity.getFirstName());
-    assertEquals(loanApplicationRequestDTO.getLastName(), clientEntity.getLastName());
-    assertEquals(loanApplicationRequestDTO.getMiddleName(), clientEntity.getMiddleName());
-    assertEquals(loanApplicationRequestDTO.getBirthday(), clientEntity.getBirthday());
-    assertEquals(loanApplicationRequestDTO.getEmail(), clientEntity.getEmail());
-    assertEquals(
-        loanApplicationRequestDTO.getPassportNumber(), clientEntity.getPassport().getNumber());
-    assertEquals(
-        loanApplicationRequestDTO.getPassportSeries(), clientEntity.getPassport().getSeries());
-
-    clientRepository.save(clientEntity);
-    applicationRepository.save(applicationEntity);
-
-    assertNotNull(clientRepository.findById(clientEntity.getId()));
-    assertNotNull(applicationRepository.findById(applicationEntity.getId()));
-
-    List<LoanOfferDTO> loanOfferDTOList =
-        Arrays.asList(
-            mapper.readValue(
-                new File("src/test/resources/json/LoanOfferDTOList.json"), LoanOfferDTO[].class));
-
     loanOfferDTOList.forEach(
         el -> el.setTotalAmount(el.getTotalAmount().setScale(2, RoundingMode.HALF_EVEN)));
+
+    when(clientRepository.save(any())).thenReturn(clientEntity);
+    when(applicationRepository.save(any())).thenReturn(applicationEntity);
+    when(conveyorClient.getOffers(loanApplicationRequestDTO)).thenReturn(loanOfferDTOList);
+    when(clientEntityMapper.toClientEntity(loanApplicationRequestDTO)).thenReturn(clientEntity);
 
     assertEquals(
         loanOfferDTOList,
@@ -104,24 +102,17 @@ class DealServiceImplTest {
   @Test
   @DisplayName("Testing selectOneOfOffers")
   void selectOneOfOffers() {
-
-    List<LoanOfferDTO> loanOfferDTOList =
-        dealService.calculationPossibleLoans(loanApplicationRequestDTO);
-
-    assertNotNull(loanOfferDTOList);
+    ClientEntity clientEntity = ClientEntity.builder().build();
+    ApplicationEntity applicationEntity =
+        ApplicationEntity.builder().id(1L).clientEntity(clientEntity).build();
+    when(applicationRepository.findById(anyLong()))
+        .thenReturn(Optional.ofNullable(applicationEntity));
+    when(clientRepository.findById(anyLong())).thenReturn(Optional.ofNullable(clientEntity));
 
     dealService.selectOneOfOffers(loanOfferDTOList.get(0));
 
-    ApplicationEntity applicationEntity =
-        applicationRepository.findById(loanOfferDTOList.get(0).getApplicationId()).get();
-
-    assertNotNull(applicationEntity);
-
     List<ApplicationHistory> applicationHistoryList = applicationEntity.getStatusHistory();
-
-    // fix scale error
     LoanOfferDTO appliedOffer = applicationEntity.getAppliedOffer();
-    appliedOffer.setTotalAmount(appliedOffer.getTotalAmount().setScale(2, RoundingMode.HALF_EVEN));
 
     assertNotNull(applicationHistoryList);
     assertEquals(applicationHistoryList.get(0).getStatus(), ApplicationStatus.PREAPPROVAL);
@@ -131,30 +122,38 @@ class DealServiceImplTest {
     verify(kafkaTemplate, VerificationModeFactory.times(1))
         .send(
             "conveyor-finish-registration",
-            1L,
-            new EmailMessage("test@example.com", Theme.FINISH_REGISTRATION, 1L));
+            applicationEntity.getId(),
+            new EmailMessage(
+                clientEntity.getEmail(), Theme.FINISH_REGISTRATION, applicationEntity.getId()));
   }
 
   @Test
   @DisplayName("Testing completionOfRegistration")
   void completionOfRegistration() throws IOException {
+    ClientEntity clientEntity = ClientEntity.builder().email("test@example.com").build();
+    ApplicationEntity applicationEntity =
+        ApplicationEntity.builder()
+            .id(1L)
+            .statusHistory(new ArrayList<>())
+            .clientEntity(clientEntity)
+            .creditEntity(CreditEntity.builder().build())
+            .build();
 
     FinishRegistrationRequestDTO finishRegistrationRequestDTO =
         mapper.readValue(
             new File("src/test/resources/json/FinishRegistrationRequestDTO.json"),
             FinishRegistrationRequestDTO.class);
 
-    LoanOfferDTO loanOfferDTO =
-        dealService.calculationPossibleLoans(loanApplicationRequestDTO).get(0);
-
-    Long applicationId = loanOfferDTO.getApplicationId();
-    dealService.selectOneOfOffers(loanOfferDTO);
-    dealService.completionOfRegistration(applicationId, finishRegistrationRequestDTO);
-
-    ApplicationEntity applicationEntity = applicationRepository.findById(applicationId).get();
-    assertNotNull(applicationEntity);
-
+    CreditDTO creditDTO =
+        mapper.readValue(new File("src/test/resources/json/CreditDTO.json"), CreditDTO.class);
     CreditEntity creditEntity = applicationEntity.getCreditEntity();
+
+    when(applicationRepository.findById(anyLong()))
+        .thenReturn(Optional.ofNullable(applicationEntity));
+    when(conveyorClient.getCreditDto(any())).thenReturn(creditDTO);
+    when(creditEntityMapper.toCreditEntity(creditDTO)).thenReturn(creditEntity);
+
+    dealService.completionOfRegistration(applicationEntity.getId(), finishRegistrationRequestDTO);
 
     assertNotNull(creditEntity);
 
@@ -163,8 +162,9 @@ class DealServiceImplTest {
 
     verify(kafkaTemplate, VerificationModeFactory.times(1))
         .send(
-            "conveyor-finish-registration",
-            1L,
-            new EmailMessage("test@example.com", Theme.FINISH_REGISTRATION, 1L));
+            "conveyor-create-documents",
+            applicationEntity.getId(),
+            new EmailMessage(
+                clientEntity.getEmail(), Theme.CREATE_DOCUMENTS, applicationEntity.getId()));
   }
 }
