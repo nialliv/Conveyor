@@ -37,6 +37,8 @@ services:
 
   grafana:
     container_name: grafana
+    depends_on:
+      - prometheus
     build: './grafana'
     ports:
       - 3000:3000
@@ -51,6 +53,8 @@ services:
 
   prometheus:
     container_name: prometheus
+    depends_on:
+      - deal
     image: prom/prometheus
     user: root
     ports:
@@ -73,6 +77,22 @@ services:
     environment:
       - APPLICATION_CLIENT_URL=application:8080/api
       - DEAL_CLIENT_URL=deal:8080/api
+
+  auth:
+    container_name: auth
+    build: ./auth
+    depends_on:
+      - gateway
+      - postgres
+    ports:
+      - "8085:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=MYPASS
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=create
+
+
 
   application:
     container_name: application
