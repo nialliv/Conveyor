@@ -20,6 +20,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CREATE_TOPICS: '''
+      audit:1:1,
       conveyor-finish-registration:1:1,
       conveyor-create-documents:1:1,
       conveyor-send-documents:1:1,
@@ -48,7 +49,6 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - DATASOURCE_URL=http://prometheus:9090
 
-
   prometheus:
     container_name: prometheus
     image: prom/prometheus
@@ -58,6 +58,12 @@ services:
     volumes:
       - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./prometheus/container:/prometheus
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
 
   gateway:
     container_name: gateway
@@ -73,6 +79,15 @@ services:
     environment:
       - APPLICATION_CLIENT_URL=application:8080/api
       - DEAL_CLIENT_URL=deal:8080/api
+
+  audit:
+    container_name: audit
+    build: ./audit
+    ports:
+      - "8086:8080"
+#    depends_on:
+#      -
+
 
   application:
     container_name: application
