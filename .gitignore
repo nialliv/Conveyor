@@ -7,6 +7,13 @@ mvn*
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Prometheus + Grafana
+./prometheus/container/
+./grafana/alerting
+./grafana/csv
+./grafana/plugins
+./grafana/png
+
 ### STS ###
 .apt_generated
 .classpath
