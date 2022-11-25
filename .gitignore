@@ -8,11 +8,9 @@ mvn*
 !**/src/test/**/target/
 
 # Prometheus + Grafana
-./prometheus/container/
-./grafana/alerting
-./grafana/csv
-./grafana/plugins
-./grafana/png
+./prometheus/container
+./grafana/*
+!./grafana/provisioning
 
 ### STS ###
 .apt_generated
