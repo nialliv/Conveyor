@@ -10,7 +10,7 @@ mvn*
 # Prometheus + Grafana
 container
 container/*
-container/lock
+**/container/lock*
 grafana/*
 !**/provisioning
 
