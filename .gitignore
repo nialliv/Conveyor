@@ -8,7 +8,7 @@ mvn*
 !**/src/test/**/target/
 
 # Prometheus + Grafana
-container
+container/*
 grafana/*
 !**/provisioning
 
