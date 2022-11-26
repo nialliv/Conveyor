@@ -19,22 +19,19 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: '''
-      audit:1:1,
-      conveyor-finish-registration:1:1,
+      KAFKA_CREATE_TOPICS: '''conveyor-finish-registration:1:1,
       conveyor-create-documents:1:1,
       conveyor-send-documents:1:1,
       conveyor-send-ses:1:1,
       conveyor-credit-issued:1:1,
-      conveyor-application-denied:1:1
-      '''
-
+      conveyor-application-denied:1:1,
+      audit:1:1'''
 
   zookeeper:
     container_name: zookeeper
     image: wurstmeister/zookeeper
-    expose:
-      - 2181
+    ports:
+      - "2181:2181"
 
   grafana:
     container_name: grafana
@@ -85,9 +82,13 @@ services:
     build: ./audit
     ports:
       - "8086:8080"
-#    depends_on:
-#      -
-
+    depends_on:
+      - kafka
+    environment:
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - KAFKA_SERVER=kafka:9092
+      - KAFKA_GROUP_ID=audit.group.id
 
   application:
     container_name: application

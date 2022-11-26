@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.artemev.deal.aspects.AuditAction;
 import ru.artemev.deal.client.ConveyorClient;
 import ru.artemev.deal.dto.CreditDTO;
 import ru.artemev.deal.dto.FinishRegistrationRequestDTO;
@@ -62,6 +63,7 @@ public class DealServiceImpl implements DealService {
 
   @Override
   @Transactional
+  @AuditAction
   public List<LoanOfferDTO> calculationPossibleLoans(
       LoanApplicationRequestDTO loanApplicationRequestDTO) {
     /*
@@ -99,6 +101,7 @@ public class DealServiceImpl implements DealService {
 
   @Override
   @Transactional
+  @AuditAction
   public void selectOneOfOffers(LoanOfferDTO loanOfferDTO) {
     /*
     По API приходит LoanOfferDTO
@@ -155,6 +158,7 @@ public class DealServiceImpl implements DealService {
 
   @Override
   @Transactional
+  @AuditAction
   public void completionOfRegistration(
       Long id, FinishRegistrationRequestDTO finishRegistrationRequestDTO) {
     /*
@@ -276,6 +280,7 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
+  @AuditAction
   public void sendDocuments(Long applicationId) {
     log.info("====== Started sendDocuments =======");
 
@@ -297,6 +302,7 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
+  @AuditAction
   public void signDocuments(Long applicationId) {
     log.info("====== Started signDocuments =======");
 
@@ -322,6 +328,7 @@ public class DealServiceImpl implements DealService {
   }
 
   @Override
+  @AuditAction
   public void codeDocuments(Long applicationId, Integer sesCode) {
     log.info("====== Started codeDocuments =======");
 
